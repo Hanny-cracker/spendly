@@ -17,9 +17,10 @@ class Category extends Model
     protected function casts(): array
     {
         return [
-            'type' => Rule::enum(CategoryType::class),
+            'type' => CategoryType::class,
         ];
     }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

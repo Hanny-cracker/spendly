@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
+use App\Actions\Users\CreateDefaultUserData;
 
 class UserObserver
 {
@@ -11,7 +12,8 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        //
+        // Create default Category and account for every user.
+        (new CreateDefaultUserData())->handle($user);
     }
 
     /**

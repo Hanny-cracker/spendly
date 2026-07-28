@@ -1,4 +1,5 @@
 <?php
+// This are shared by every user so we create this so we dont hardcode or let the user create them bythemselves 
 return [
 
     'default_categories' => [
@@ -6,10 +7,10 @@ return [
         'income' => [
             'Salary',
             'Business',
-            'Freelance',
-            'Investment',
-            'Gift',
-            'Other Income',
+            // 'Freelance',
+            // 'Investment',
+            // 'Gift',
+            // 'Other Income',
         ],
 
         'expense' => [
@@ -18,11 +19,11 @@ return [
             'Housing',
             'Utilities',
             'Shopping',
-            'Entertainment',
-            'Healthcare',
+            // 'Entertainment',
+            // 'Healthcare',
             'Education',
-            'Travel',
-            'Other Expense',
+            // 'Travel',
+            // 'Other Expense',
         ],
 
 
@@ -35,6 +36,10 @@ return [
         [
             'name' => 'Bank',
             'type' => 'bank',
+        ],
+                [
+            'name' => 'MoMo',
+            'type' => 'mobile_money',
         ],
 
     ]

@@ -16,7 +16,7 @@ class Account extends Model
     protected function casts(): array
     {
         return [
-            'type' => Rule::enum(AccountType::class),
+            'type' => AccountType::class,
             'opening_balance' => 'decimal:2',
             'current_balance' => 'decimal:2',
             'is_default' => 'boolean',

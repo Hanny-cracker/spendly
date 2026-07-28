@@ -17,9 +17,9 @@ class RecurringTransaction extends Model
 protected function casts(): array
 {
     return [
-        'type' => Rule::enum(TransactionType::class),
-        'frequency' => Rule::enum(RecurringFrequency::class),
-        'status' => Rule::enum(RecurringStatus::class),
+        'type' => TransactionType::class,
+        'frequency' => RecurringFrequency::class,
+        'status' => RecurringStatus::class,
         'amount' => 'decimal:2',
         'start_date' => 'date',
         'next_run' => 'date',

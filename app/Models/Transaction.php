@@ -47,6 +47,8 @@ class Transaction extends Model
             'parent_transaction_id'
         );
     }
+
+    // This scopr helps to reduce query repetition and help for filters 
     /*
      * Scope: expenses only
      */
