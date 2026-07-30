@@ -2,17 +2,24 @@
 
 namespace App\Models;
 
+
+use App\Concerns\HasPublicIdentifier;
 use App\Enums\CategoryType;
+use App\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Validation\Rule;
 
 
-#[Fillable(['user_id', 'name', 'type', 'icon', 'color', 'slug'])]
+#[Fillable(['public_id','user_id', 'name', 'type', 'icon', 'color'])]
 class Category extends Model
 {
+    use BelongsToUser;
+    use HasFactory;
+    use HasPublicIdentifier;
+    protected const PUBLIC_ID_PREFIX = 'cat';
 
     protected function casts(): array
     {
@@ -21,6 +28,10 @@ class Category extends Model
         ];
     }
 
+    public static function publicIdPrefix(): string
+    {
+        return 'cat';
+    }
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

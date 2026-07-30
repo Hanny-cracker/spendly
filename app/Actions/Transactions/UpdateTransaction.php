@@ -2,7 +2,8 @@
 
 namespace App\Actions\Transactions;
 
-
+use App\Data\Transaction\UpdateTransactionData;
+use App\Enums\TransactionType;
 use App\Models\Transaction;
 use App\Services\AccountService;
 use Illuminate\Support\Facades\DB;
@@ -19,74 +20,112 @@ class UpdateTransaction
 
     public function handle(
         Transaction $transaction,
-        array $data
+        UpdateTransactionData $data
     ): Transaction {
 
+
         return DB::transaction(function () use (
-            $transaction,
-            $data
+            $transaction,  $data
         ) {
-
             $this->reverseBalance($transaction);
+            $transaction->update([
+                'account_id' => $data->accountId,
+                'category_id' => $data->categoryId,
+                'title' => $data->title,
+                'description' => $data->description,
+                'amount' => $data->amount,
+                'type' => $data->type,
+                'date' => $data->date,
+                'status' => $data->status,
+                'receipt_path' => $data->receiptPath,
+                'notes' => $data->notes,
+            ]);
 
-
-            $transaction->update($data);
-
+            // $transaction->fill([
+            //     'account_id' => $data->accountId,
+            //     'category_id' => $data->categoryId,
+            //     'title' => $data->title,
+            //     'description' => $data->description,
+            //     'amount' => $data->amount,
+            //     'type' => $data->type,
+            //     'date' => $data->date,
+            //     'status' => $data->status,
+            //     'receipt_path' => $data->receiptPath,
+            //     'notes' => $data->notes,
+            // ]);
+            // $transaction->save();
+            // $transaction->refresh();
 
             $this->applyBalance($transaction);
 
-
             return $transaction;
+
         });
+
     }
 
 
 
-    private function reverseBalance(Transaction $transaction)
-    {
+    private function reverseBalance(
+        Transaction $transaction
+    ): void {
 
-        if ($transaction->type === 'income') {
+
+        if ($transaction->type === TransactionType::Income) {
+
 
             $this->accountService
                 ->decreaseBalance(
                     $transaction->account,
                     $transaction->amount
                 );
+
         }
 
 
-        if ($transaction->type === 'expense') {
+        if ($transaction->type === TransactionType::Expense) {
+
 
             $this->accountService
                 ->increaseBalance(
                     $transaction->account,
                     $transaction->amount
                 );
+
         }
+
     }
 
 
 
-    private function applyBalance(Transaction $transaction)
-    {
+    private function applyBalance(
+        Transaction $transaction
+    ): void {
 
-        if ($transaction->type == 'income') {
+
+        if ($transaction->type === TransactionType::Income) {
+
 
             $this->accountService
                 ->increaseBalance(
                     $transaction->account,
                     $transaction->amount
                 );
+
         }
 
 
-        if ($transaction->type == 'expense') {
+        if ($transaction->type === TransactionType::Expense) {
+
 
             $this->accountService
                 ->decreaseBalance(
                     $transaction->account,
                     $transaction->amount
                 );
+
         }
+
     }
+
 }

@@ -5,29 +5,50 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Validation\Rule;
+use App\Concerns\BelongsToUser;
 use App\Enums\TransactionType;
 use App\Enums\RecurringFrequency;
 use App\Enums\RecurringStatus;
+use \App\Concerns\HasPublicIdentifier;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[Fillable([ 'user_id','account_id','category_id', 'title','description','amount','type','frequency',
-            'interval','start_date','next_run','end_date','status','last_generated_at',])]
+#[Fillable([
+    'public_id',
+    'user_id',
+    'account_id',
+    'category_id',
+    'title',
+    'description',
+    'amount',
+    'type',
+    'frequency',
+    'interval',
+    'start_date',
+    'next_run',
+    'end_date',
+    'status',
+    'last_generated_at',
+])]
 class RecurringTransaction extends Model
 {
-protected function casts(): array
-{
-    return [
-        'type' => TransactionType::class,
-        'frequency' => RecurringFrequency::class,
-        'status' => RecurringStatus::class,
-        'amount' => 'decimal:2',
-        'start_date' => 'date',
-        'next_run' => 'date',
-        'end_date' => 'date',
-        'last_generated_at' => 'datetime',
-    ];
-}
+    use BelongsToUser;
+    use HasFactory;
+    use HasPublicIdentifier;
 
+    protected const PUBLIC_ID_PREFIX = 'rec';
+    protected function casts(): array
+    {
+        return [
+            'type' => TransactionType::class,
+            'frequency' => RecurringFrequency::class,
+            'status' => RecurringStatus::class,
+            'amount' => 'decimal:2',
+            'start_date' => 'date',
+            'next_run' => 'date',
+            'end_date' => 'date',
+            'last_generated_at' => 'datetime',
+        ];
+    }
 
 
     public function user(): BelongsTo
@@ -48,5 +69,4 @@ protected function casts(): array
     {
         return $this->belongsTo(Category::class);
     }
-
 }

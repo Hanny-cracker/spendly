@@ -7,15 +7,20 @@ use App\Actions\Users\CreateDefaultUserData;
 
 class UserObserver
 {
+    public bool $afterCommit = true;
+    public function __construct(
+        private CreateDefaultUserData $createDefaultUserData
+    ) {}
+
+
     /**
      * Handle the User "created" event.
      */
     public function created(User $user): void
     {
-        // Create default Category and account for every user.
-        (new CreateDefaultUserData())->handle($user);
+        $this->createDefaultUserData
+            ->handle($user);
     }
-
     /**
      * Handle the User "updated" event.
      */

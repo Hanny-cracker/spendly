@@ -2,17 +2,24 @@
 
 namespace App\Models;
 
+use App\Concerns\BelongsToUser;
+use App\Concerns\HasPublicIdentifier;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Validation\Rule;
 
-#[Fillable(['user_id', 'account_id', 'category_id', 'parent_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes', 0])]
-
+#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'parent_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
 class Transaction extends Model
 {
+    use BelongsToUser;
+    use HasFactory;
+    use HasPublicIdentifier;
+
+    protected const string PUBLIC_ID_PREFIX = 'txn';
 
     protected function casts(): array
     {
@@ -24,22 +31,33 @@ class Transaction extends Model
         ];
     }
 
+    public static function publicIdPrefix(): string
+    {
+        return self::PUBLIC_ID_PREFIX;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    public function transfer()
+    {
+        return $this->belongsTo(
+            Transfer::class
+        );
+    }
 
-
-    // For recurring transactions
     public function parentTransaction(): BelongsTo
     {
         return $this->belongsTo(
@@ -48,11 +66,7 @@ class Transaction extends Model
         );
     }
 
-    // This scopr helps to reduce query repetition and help for filters 
-    /*
-     * Scope: expenses only
-     */
-    public function scopeExpenses($query)
+    public function scopeExpenses(Builder $query): Builder
     {
         return $query->where(
             'type',
@@ -60,10 +74,7 @@ class Transaction extends Model
         );
     }
 
-    /*
-     * Scope: income only
-     */
-    public function scopeIncome($query)
+    public function scopeIncome(Builder $query): Builder
     {
         return $query->where(
             'type',

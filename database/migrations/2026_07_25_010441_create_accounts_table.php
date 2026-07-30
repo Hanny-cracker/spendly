@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
 
             $table->id();
+            $table->string('public_id')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->enum('type', [

@@ -16,3 +16,6 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 $status = $app->handleCommand(new ArgvInput);
 
 exit($status);
+
+// this is to be added to the conposer.json file
+ // "@php artisan dev"
