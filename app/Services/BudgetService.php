@@ -8,8 +8,6 @@ use App\Models\Budget;
 
 class BudgetService
 {
-
-
     public function spent(Budget $budget)
     {
 
@@ -26,7 +24,6 @@ class BudgetService
 
     public function remaining(Budget $budget)
     {
-
         return $budget->amount - $this->spent($budget);
     }
 
@@ -38,7 +35,6 @@ class BudgetService
         if ($budget->amount == 0) {
             return 0;
         }
-
 
         return ($this->spent($budget) / $budget->amount) * 100;
     }

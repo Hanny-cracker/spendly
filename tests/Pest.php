@@ -14,9 +14,9 @@ use Tests\TestCase;
 |
 */
 
-pest()->extend(TestCase::class)
-    ->use(RefreshDatabase::class)
-    ->in('Feature');
+// pest()->extend(TestCase::class)
+//     ->use(RefreshDatabase::class)
+//     ->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +44,10 @@ expect()->extend('toBeOne', function () {
 |
 */
 
+uses(
+    TestCase::class,
+    RefreshDatabase::class,
+)->in('Feature', 'Unit');
 function something()
 {
     // ..

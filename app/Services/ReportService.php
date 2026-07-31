@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Transaction;
-
+use App\Enums\TransactionType;
 
 class ReportService
 {
@@ -12,7 +12,8 @@ class ReportService
     public function monthlyIncome($user)
     {
         return Transaction::where('user_id', $user->id)
-            ->where('type', 'income')
+            ->where('type', TransactionType::Income)
+            ->whereNull('transfer_id')
             ->whereMonth('date', now()->month)
             ->sum('amount');
     }
@@ -22,7 +23,8 @@ class ReportService
     public function monthlyExpenses($user)
     {
         return Transaction::where('user_id', $user->id)
-            ->where('type', 'expense')
+            ->where('type', TransactionType::Expense)
+            ->whereNull('transfer_id')
             ->whereMonth('date', now()->month)
             ->sum('amount');
     }

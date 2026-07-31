@@ -2,78 +2,86 @@
 
 namespace App\Actions\Transfers;
 
-use App\Actions\Transactions\CreateTransaction;
+use App\Actions\Transactions\UpdateTransaction;
 use App\Data\Transfer\CreateTransferData;
 use App\Data\Transaction\CreateTransactionData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Transfer;
-use App\Services\TransferValidationService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
-class CreateTransfer
+class UpdateTransfer
 {
     public function __construct(
-        private TransferValidationService $validation,
-        private CreateTransaction $createTransaction,
+        private UpdateTransaction $updateTransaction
     ) {}
 
     public function handle(
+        Transfer $transfer,
         CreateTransferData $data
     ): Transfer {
 
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use (
+            $transfer,
+            $data
+        ) {
 
-            $this->validation->validate($data);
+    //    Update Transfer
+          
 
-            $transfer = Transfer::create([
-                'user_id' => $data->userId,
+            $transfer->update([
                 'from_account_id' => $data->fromAccountId,
                 'to_account_id' => $data->toAccountId,
                 'amount' => $data->amount,
                 'description' => $data->description,
                 'date' => $data->date,
-                'reference' => (string) Str::uuid(),
-
             ]);
 
-//  Debit Source Account
+            //  Update Expense Transaction
+           
 
-            $this->createTransaction->handle(
+            $this->updateTransaction->handle(
+
+                $transfer->outgoingTransaction,
+
                 new CreateTransactionData(
+
                     userId: $data->userId,
                     accountId: $data->fromAccountId,
                     categoryId: null,
                     transferId: $transfer->id,
                     recurringTransactionId: null,
-                    title: 'Transfer to ' . $transfer->toAccount->name,
+                    title: 'Transfer to '.$transfer->toAccount->name,
                     description: $data->description,
                     amount: $data->amount,
                     type: TransactionType::Expense,
                     date: $data->date,
-                    status: TransactionStatus::Completed,
+                    status: TransactionStatus::Completed
+
                 )
 
             );
 
-    //   Credit Destination Account
+            //  Update Income Transaction
+            
 
+            $this->updateTransaction->handle(
 
-            $this->createTransaction->handle(
+                $transfer->incomingTransaction,
 
                 new CreateTransactionData(
+
                     userId: $data->userId,
                     accountId: $data->toAccountId,
                     categoryId: null,
                     transferId: $transfer->id,
                     recurringTransactionId: null,
-                    title: 'Transfer from ' . $transfer->fromAccount->name,
+                    title: 'Transfer from '.$transfer->fromAccount->name,
                     description: $data->description,
                     amount: $data->amount,
                     type: TransactionType::Income,
                     date: $data->date,
-                    status: TransactionStatus::Completed,
+                    status: TransactionStatus::Completed
                 )
 
             );
@@ -81,8 +89,11 @@ class CreateTransfer
             return $transfer->fresh([
                 'fromAccount',
                 'toAccount',
-                'transactions',
+                'outgoingTransaction',
+                'incomingTransaction',
             ]);
+
         });
+
     }
 }

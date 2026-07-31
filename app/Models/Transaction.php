@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'parent_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
+#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'transfer_id', 'parent_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
 class Transaction extends Model
 {
     use BelongsToUser;
@@ -80,5 +80,25 @@ class Transaction extends Model
             'type',
             TransactionType::Income
         );
+    }
+
+    public function getDisplayTitleAttribute(): string
+    {
+        if (!$this->transfer) {
+            return $this->title;
+        }
+
+        if ($this->type->isExpense()) {
+
+            return 'Transfer to ' .
+                $this->transfer
+                ->toAccount
+                ->name;
+        }
+
+        return 'Transfer from ' .
+            $this->transfer
+            ->fromAccount
+            ->name;
     }
 }

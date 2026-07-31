@@ -13,7 +13,9 @@ final readonly class CreateTransactionData
         public int $userId,
         public int $accountId,
         public ?int $categoryId,
-        public ?int $parentTransactionId,
+        public ?int $transferId,
+        public ?int $recurringTransactionId,
+        // public ?int $parentTransactionId,
         public string $title,
         public ?string $description,
         public float $amount,
@@ -22,6 +24,5 @@ final readonly class CreateTransactionData
         public TransactionStatus $status,
         public ?string $receiptPath = null,
         public ?string $notes = null,
-    ){}
-
+    ) {}
 }

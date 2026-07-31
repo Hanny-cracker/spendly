@@ -16,7 +16,8 @@ class TransactionFactory extends Factory
         return [
             'user_id' => User::factory(),
             'account_id' => Account::factory(),
-            'category_id' => Category::factory(),
+            'category_id' => null,
+            'transfer_id' => null,
             'title' => fake()->sentence(3),
             'description' => fake()->sentence(),
             'amount' => fake()->randomFloat(2, 10, 1000),

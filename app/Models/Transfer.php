@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['user_id', 'from_account_id', 'to_account_id', 'amount', 'reference', 'description', 'date'])]
 class Transfer extends Model
 {
 
     protected $casts = [
-        'amount'=>'float',
-        'date'=>'date',
+        'amount' => 'float',
+        'date' => 'date',
     ];
 
 
@@ -38,10 +40,20 @@ class Transfer extends Model
         );
     }
 
-
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
     }
 
+    public function outgoingTransaction(): HasOne
+    {
+        return $this->hasOne(Transaction::class)
+            ->where('type', TransactionType::Expense);
+    }
+
+    public function incomingTransaction(): HasOne
+    {
+        return $this->hasOne(Transaction::class)
+            ->where('type', TransactionType::Income);
+    }
 }

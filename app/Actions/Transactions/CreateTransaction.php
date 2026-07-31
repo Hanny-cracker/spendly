@@ -8,14 +8,11 @@ use App\Models\Transaction;
 use App\Services\AccountService;
 use Illuminate\Support\Facades\DB;
 
-
 class CreateTransaction
 {
-
     public function __construct(
         private AccountService $accountService
     ) {}
-
 
     public function handle(
         CreateTransactionData $data
@@ -23,51 +20,42 @@ class CreateTransaction
 
         return DB::transaction(function () use ($data) {
 
-
             $transaction = Transaction::create([
                 'user_id' => $data->userId,
                 'account_id' => $data->accountId,
                 'category_id' => $data->categoryId,
-                'parent_transaction_id' =>
-                    $data->parentTransactionId,
+                'transfer_id' => $data->transferId,
                 'title' => $data->title,
                 'description' => $data->description,
                 'amount' => $data->amount,
                 'type' => $data->type,
-                'date' => $data->date,
                 'status' => $data->status,
-                'receipt_path' =>
-                    $data->receiptPath,
+                'date' => $data->date,
+                'receipt_path' => $data->receiptPath,
                 'notes' => $data->notes,
             ]);
 
-
-            if ($data->type === TransactionType::Income) {
-
-                $this->accountService
-                    ->increaseBalance(
-                        $transaction->account,
-                        $data->amount
-                    );
-
-            }
-
-
-            if ($data->type === TransactionType::Expense) {
+            if ($data->type->isIncome()) {
 
                 $this->accountService
-                    ->decreaseBalance(
+                    ->adjustBalance(
                         $transaction->account,
-                        $data->amount
+                        $transaction->amount,
+                        $transaction->type
                     );
-
             }
 
+            if ($data->type->isExpense()) {
+
+                $this->accountService
+                    ->adjustBalance(
+                        $transaction->account,
+                        $transaction->amount,
+                        $transaction->type
+                    );
+            }
 
             return $transaction;
-
         });
-
     }
-
 }

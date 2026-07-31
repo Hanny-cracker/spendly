@@ -17,7 +17,20 @@ enum TransactionType: string
 
     case Expense = 'expense';
 
+    public function isIncome(): bool
+    {
+        return $this === self::Income;
+    }
 
+    public function isExpense(): bool
+    {
+        return $this === self::Expense;
+    }
+
+    public function multiplier(): int
+    {
+        return $this->isIncome() ? 1 : -1;
+    }
 
     protected function metadata(): array
     {
