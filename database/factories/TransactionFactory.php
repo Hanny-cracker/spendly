@@ -16,7 +16,7 @@ class TransactionFactory extends Factory
         return [
             'user_id' => User::factory(),
             'account_id' => Account::factory(),
-            'category_id' => null,
+            'category_id'=>Category::factory(),
             'transfer_id' => null,
             'title' => fake()->sentence(3),
             'description' => fake()->sentence(),
@@ -25,6 +25,7 @@ class TransactionFactory extends Factory
             'date' => now(),
             'status' => 'completed',
         ];
+        
     }
 
 

@@ -15,6 +15,8 @@ final readonly class UpdateTransactionData
         public ?int $categoryId,
         public string $title,
         public ?string $description,
+        public ?int $transferId,
+        public ?int $recurringTransactionId,
         public float $amount,
         public TransactionType $type,
         public Carbon $date,

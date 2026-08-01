@@ -29,6 +29,7 @@ it('prevents users from viewing another users transaction', function () {
             'account_id' => $account->id,
             'category_id' => $category->id,
         ]);
+        
 
 
     expect(

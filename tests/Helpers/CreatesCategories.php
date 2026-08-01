@@ -8,20 +8,22 @@ use App\Enums\CategoryType;
 
 trait CreatesCategories
 {
-    protected function createCategory(
+protected function createCategory(
+
         User $user,
-        array $attributes = [],
+        string $name = 'Food',
+        CategoryType $type = CategoryType::Expense,
+        array $attributes = []
+
     ): Category {
 
+
         return Category::factory()
-
             ->for($user)
-
             ->create(array_merge([
 
-                'name' => 'Food',
-
-                'type' => CategoryType::Expense,
+                'name'=>$name,
+                'type' => $type,
 
             ], $attributes));
 

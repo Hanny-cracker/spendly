@@ -14,9 +14,9 @@ return new class extends Migration
             $table->string('public_id')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('account_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
-            // the parent transation is used for recurring transactios.
-            $table->foreignId('parent_transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();            
+            $table->foreignId('recurring_transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
+            // $table->foreignId('parent_transaction_id')->nullable()->constrained()->nullOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('amount', 12, 2);
