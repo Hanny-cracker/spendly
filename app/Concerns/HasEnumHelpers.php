@@ -19,7 +19,7 @@ trait HasEnumHelpers
     public static function values(): array
     {
         return collect(self::cases())
-            ->map(fn (BackedEnum $case) => $case->value)
+            ->map(fn(BackedEnum $case) => $case->value)
             ->toArray();
     }
 
@@ -30,7 +30,7 @@ trait HasEnumHelpers
     public static function names(): array
     {
         return collect(self::cases())
-            ->map(fn ($case) => $case->name)
+            ->map(fn($case) => $case->name)
             ->toArray();
     }
 
@@ -48,7 +48,7 @@ trait HasEnumHelpers
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn ($case) => [
+            ->mapWithKeys(fn($case) => [
                 $case->value => $case->label(),
             ])
             ->toArray();
@@ -61,7 +61,7 @@ trait HasEnumHelpers
     public static function labels(): array
     {
         return collect(self::cases())
-            ->map(fn ($case) => $case->label())
+            ->map(fn($case) => $case->label())
             ->toArray();
     }
 
@@ -72,7 +72,7 @@ trait HasEnumHelpers
     public static function colors(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn ($case) => [
+            ->mapWithKeys(fn($case) => [
                 $case->value => $case->color(),
             ])
             ->toArray();
@@ -85,7 +85,7 @@ trait HasEnumHelpers
     public static function icons(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn ($case) => [
+            ->mapWithKeys(fn($case) => [
                 $case->value => $case->icon(),
             ])
             ->toArray();
@@ -116,5 +116,30 @@ trait HasEnumHelpers
     public static function collection(): Collection
     {
         return collect(self::cases());
+    }
+
+    public static function only(array $cases): Collection
+    {
+        return collect(self::cases())
+            ->filter(fn($case) => in_array($case, $cases, true))
+            ->values();
+    }
+    public static function except(array $cases): Collection
+    {
+        return collect(self::cases())
+            ->reject(fn($case) => in_array($case, $cases, true))
+            ->values();
+    }
+    public static function last(): static
+    {
+        return self::cases()[array_key_last(self::cases())];
+    }
+    public static function first(): static
+    {
+        return self::cases()[0];
+    }
+    public static function count(): int
+    {
+        return count(self::cases());
     }
 }

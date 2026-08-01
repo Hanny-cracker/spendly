@@ -17,6 +17,8 @@ enum TransactionType: string
 
     case Expense = 'expense';
 
+    case Transfer = 'transfer';
+
     public function isIncome(): bool
     {
         return $this === self::Income;
@@ -30,6 +32,15 @@ enum TransactionType: string
     public function multiplier(): int
     {
         return $this->isIncome() ? 1 : -1;
+    }
+
+    // public function affectsBalance(): bool
+    // {
+    //     return true;
+    // }
+    public function affectsBalance(): bool
+    {
+        return $this !== self::Transfer;
     }
 
     protected function metadata(): array
@@ -50,7 +61,6 @@ enum TransactionType: string
                 'icon' => 'heroicon-o-arrow-trending-down',
                 'description' => 'Money spent from an account.',
             ],
-
         };
     }
 }

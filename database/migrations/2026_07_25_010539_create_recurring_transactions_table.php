@@ -13,24 +13,24 @@ return new class extends Migration
             $table->id();
             $table->string('public_id')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('account_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('account_id')->constrained()->restrictOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('amount', 12, 2);
             $table->enum('type', ['
-                income','
-                expense']);
+                income', 'expense']);
             $table->enum('frequency', [
                 'daily',
                 'weekly',
                 'monthly',
+                'quarterly',
                 'yearly'
             ]);
             $table->integer('interval')->default(1);
-            $table->date('start_date');
-            $table->date('next_run');
-            $table->date('end_date')->nullable();
+            $table->timestamp('start_date');
+            $table->timestamp('next_run');
+            $table->timestamp('end_date')->nullable();
             $table->enum('status', [
                 'active',
                 'paused',
@@ -38,6 +38,7 @@ return new class extends Migration
             ])->default('active');
             $table->timestamp('last_generated_at')->nullable();
             $table->timestamps();
+            $table->index('next_run');
         });
     }
 

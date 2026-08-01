@@ -12,14 +12,24 @@ enum RecurringStatus: string
     use HasEnumHelpers;
     use HasEnumMetadata;
 
-
     case Active = 'active';
-
     case Paused = 'paused';
-
     case Completed = 'completed';
 
+    public function isActive(): bool
+    {
+        return $this === self::Active;
+    }
 
+    public function isPaused(): bool
+    {
+        return $this === self::Paused;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this === self::Completed;
+    }
 
     protected function metadata(): array
     {
@@ -28,26 +38,23 @@ enum RecurringStatus: string
             self::Active => [
                 'label' => 'Active',
                 'color' => 'green',
-                'icon' => 'heroicon-o-play-circle',
-                'description' => 'Recurring transaction is running.',
+                'icon' => 'heroicon-o-play',
+                'description' => 'Recurring transaction is active.',
             ],
-
 
             self::Paused => [
                 'label' => 'Paused',
                 'color' => 'amber',
-                'icon' => 'heroicon-o-pause-circle',
-                'description' => 'Recurring transaction is temporarily stopped.',
+                'icon' => 'heroicon-o-pause',
+                'description' => 'Recurring transaction is paused.',
             ],
-
 
             self::Completed => [
                 'label' => 'Completed',
                 'color' => 'gray',
-                'icon' => 'heroicon-o-check-badge',
-                'description' => 'Recurring transaction has ended.',
+                'icon' => 'heroicon-o-check-circle',
+                'description' => 'Recurring transaction has finished.',
             ],
-
         };
     }
 }

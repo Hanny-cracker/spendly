@@ -59,4 +59,10 @@ class Account extends Model
             'to_account_id'
         );
     }
+    public function recurringTransactions(): HasMany
+    {
+        return $this->hasMany(
+            RecurringTransaction::class
+        );
+    }
 }

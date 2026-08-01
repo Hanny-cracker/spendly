@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'transfer_id', 'parent_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
+#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'transfer_id', 'recurring_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
 class Transaction extends Model
 {
     use BelongsToUser;
@@ -57,14 +57,19 @@ class Transaction extends Model
             Transfer::class
         );
     }
-
-    public function parentTransaction(): BelongsTo
+    public function recurringTransaction(): BelongsTo
     {
         return $this->belongsTo(
-            Transaction::class,
-            'parent_transaction_id'
+            RecurringTransaction::class
         );
     }
+    // public function parentTransaction(): BelongsTo
+    // {
+    //     return $this->belongsTo(
+    //         Transaction::class,
+    //         'parent_transaction_id'
+    //     );
+    // }
 
     public function scopeExpenses(Builder $query): Builder
     {

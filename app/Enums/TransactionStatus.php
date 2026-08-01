@@ -18,6 +18,21 @@ enum TransactionStatus: string
     case Completed = 'completed';
 
 
+    public function isPending(): bool
+    {
+        return $this === self::Pending;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this === self::Completed;
+    }
+
+    public function affectsBalance(): bool
+    {
+        return $this->isCompleted();
+    }
+
 
     protected function metadata(): array
     {
@@ -37,7 +52,6 @@ enum TransactionStatus: string
                 'icon' => 'heroicon-o-check-circle',
                 'description' => 'Transaction completed successfully.',
             ],
-
         };
     }
 }

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
-#[Fillable(['public_id','user_id', 'name', 'type', 'icon', 'color'])]
+#[Fillable(['public_id', 'user_id', 'name', 'type', 'icon', 'color'])]
 class Category extends Model
 {
     use BelongsToUser;
@@ -47,5 +47,11 @@ class Category extends Model
     public function budgets(): HasMany
     {
         return $this->hasMany(Budget::class);
+    }
+    public function recurringTransactions(): HasMany
+    {
+        return $this->hasMany(
+            RecurringTransaction::class
+        );
     }
 }

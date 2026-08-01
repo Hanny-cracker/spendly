@@ -39,34 +39,68 @@ class RecurringTransaction extends Model
     protected function casts(): array
     {
         return [
-            'type' => TransactionType::class,
-            'frequency' => RecurringFrequency::class,
-            'status' => RecurringStatus::class,
             'amount' => 'decimal:2',
             'start_date' => 'date',
             'next_run' => 'date',
             'end_date' => 'date',
             'last_generated_at' => 'datetime',
+            'type' => TransactionType::class,
+            'frequency' => RecurringFrequency::class,
+            'status' => RecurringStatus::class,
         ];
     }
 
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
 
-
-    public function account(): BelongsTo
+    public function account()
     {
         return $this->belongsTo(Account::class);
     }
 
 
-
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+    public function isActive(): bool
+    {
+        return $this->status->isActive();
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->status->isPaused();
+    }
+
+    public function hasEnded(): bool
+    {
+        return $this->ends_at?->isPast() ?? false;
+    }
+
+    public function isDue(): bool
+    {
+        return $this->next_run_at->isPast()
+            || $this->next_run_at->isNow();
+    }
+    public function isCompleted(): bool
+    {
+        return $this->status === RecurringStatus::Completed;
+    }
+    public function shouldGenerate(): bool
+    {
+        return $this->isActive()
+            && ! $this->hasEnded()
+            && $this->isDue();
     }
 }

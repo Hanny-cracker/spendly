@@ -18,6 +18,15 @@ enum CategoryType: string
 
     case Expense = 'expense';
 
+    public function isIncome(): bool
+    {
+        return $this === self::Income;
+    }
+
+    public function isExpense(): bool
+    {
+        return $this === self::Expense;
+    }
 
 
     protected function metadata(): array
@@ -38,7 +47,6 @@ enum CategoryType: string
                 'icon' => 'heroicon-o-arrow-trending-down',
                 'description' => 'Money leaving your accounts.',
             ],
-
         };
     }
 }

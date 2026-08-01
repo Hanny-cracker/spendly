@@ -25,6 +25,7 @@ class CreateTransaction
                 'account_id' => $data->accountId,
                 'category_id' => $data->categoryId,
                 'transfer_id' => $data->transferId,
+                'recurring_transaction_id' => $data->recurringTransactionId,
                 'title' => $data->title,
                 'description' => $data->description,
                 'amount' => $data->amount,
