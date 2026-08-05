@@ -5,6 +5,7 @@ namespace App\Data\Budget;
 use Carbon\Carbon;
 use App\Concerns\BudgetPeriod;
 
+
 readonly class CreateBudgetData
 {
     public function __construct(
@@ -17,7 +18,8 @@ readonly class CreateBudgetData
         public Carbon $endDate,
         public int $alertPercentage = 80,
         public bool $isActive = true,
-    ) {}
+    ) {
+    }
 
     /**
      * Convert DTO to array for mass assignment.
