@@ -1,54 +1,60 @@
 <?php
 
-use App\Models\User;
-use App\Models\Account;
-use App\Models\RecurringTransaction;
-
-use App\Data\RecurringTransaction\UpdateRecurringTransactionData;
-
 use App\Actions\RecurringTransactions\UpdateRecurringTransaction;
+use App\Data\RecurringTransaction\UpdateRecurringTransactionData;
+use App\Enums\TransactionType;
+use App\Enums\RecurringFrequency;
+use App\Enums\RecurringStatus;
+use App\Models\RecurringTransaction;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
-it('can update a recurring transaction', function () {
+uses(RefreshDatabase::class);
 
 
-    $user = User::factory()->create();
 
-    $account = Account::factory()
-        ->for($user)
-        ->create();
+it('can update a recurring transaction', function(){
+
 
     $recurring = RecurringTransaction::factory()
-        ->for($user)
-        ->for($account)
-        ->create([
-            'title' => 'Netflix',
-            'amount' => 15,
-        ]);
+        ->create();
 
 
 
     $data = new UpdateRecurringTransactionData(
-        amount: 20,
-        title: 'Netflix Premium',
+
+        title:'Updated Netflix',
+
+        description:'Updated',
+
+        amount:7000,
+
+        type:TransactionType::Expense,
+
+        frequency:RecurringFrequency::Monthly,
+
+        interval:1,
+
+        endDate:null,
+
+        status:RecurringStatus::Active,
 
     );
 
 
 
     $updated = app(UpdateRecurringTransaction::class)
-        ->handle(
-            $recurring,
-            $data
-        );
+        ->handle($recurring,$data);
 
 
 
-    expect($updated->amount)
-        ->toBe('20.00');
+    expect($updated->fresh())
 
+        ->title
+        ->toBe('Updated Netflix')
 
-    expect($updated->title)
-        ->toBe('Netflix Premium');
+        ->amount
+        ->toBe(7000.0);
+
 
 });

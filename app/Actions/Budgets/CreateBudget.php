@@ -9,8 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class CreateBudget
 {
+
     public function handle(CreateBudgetData $data): Budget
     {
+
+
         // Validation
 
         if ($data->amount <= 0) {
@@ -38,24 +41,30 @@ class CreateBudget
             ]);
         }
 
-        // Prevent duplicate budgets
+        // Prevent duplicate active budgets for the same category and period
 
         $exists = Budget::query()
             ->where('user_id', $data->userId)
             ->where('category_id', $data->categoryId)
-            ->where('start_date', $data->startDate)
-            ->where('end_date', $data->endDate)
+            ->where('period', $data->period)
+            ->where('is_active', true)
+            ->whereDate('start_date', $data->startDate)
+            ->whereDate('end_date', $data->endDate)
             ->exists();
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'budget' => 'A budget already exists for this period.',
+                'budget' => 'An active budget already exists for this category and period.',
             ]);
         }
+
+        // Prevent overlapping active budgets
 
         $overlap = Budget::query()
             ->where('user_id', $data->userId)
             ->where('category_id', $data->categoryId)
+            ->where('period', $data->period)
+            ->where('is_active', true)
             ->where(function ($query) use ($data) {
                 $query
                     ->whereBetween('start_date', [$data->startDate, $data->endDate])
@@ -70,10 +79,9 @@ class CreateBudget
 
         if ($overlap) {
             throw ValidationException::withMessages([
-                'budget' => 'A budget already overlaps this period.',
+                'budget' => 'An active budget already exists for this period.',
             ]);
         }
-
         // Create Budget
 
         return Budget::create($data->toArray());

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Concerns\BelongsToUser;
-use App\Concerns\BudgetPeriod;
+use App\Enums\BudgetPeriod;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 #[Fillable([
@@ -29,15 +29,9 @@ class Budget extends Model
     use BelongsToUser;
     use HasFactory;
     use HasPublicIdentifier;
-    // use HasUuids;
     protected const PUBLIC_ID_PREFIX = 'bud';
 
-    public $incrementing = false;
 
-    /**
-     * UUID key type.
-     */
-    // protected $keyType = 'string';
 
     /**
      * Attribute casting.
@@ -45,7 +39,7 @@ class Budget extends Model
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
+            'amount' => 'float',
             'period' => BudgetPeriod::class,
             'start_date' => 'date',
             'end_date' => 'date',

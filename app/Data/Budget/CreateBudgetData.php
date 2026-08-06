@@ -2,8 +2,8 @@
 
 namespace App\Data\Budget;
 
-use Carbon\Carbon;
-use App\Concerns\BudgetPeriod;
+use App\Enums\BudgetPeriod;
+use Carbon\CarbonInterface;
 
 readonly class CreateBudgetData
 {
@@ -13,8 +13,8 @@ readonly class CreateBudgetData
         public string $name,
         public float $amount,
         public BudgetPeriod $period,
-        public Carbon $startDate,
-        public Carbon $endDate,
+    public CarbonInterface $startDate,
+    public CarbonInterface $endDate,
         public int $alertPercentage = 80,
         public bool $isActive = true,
     ) {}
@@ -28,7 +28,7 @@ readonly class CreateBudgetData
             'user_id' => $this->userId,
             'category_id' => $this->categoryId,
             'name' => $this->name,
-            'amount' => $this->amount,
+            'amount' => (float) $this->amount,
             'period' => $this->period,
             'start_date' => $this->startDate,
             'end_date' => $this->endDate,

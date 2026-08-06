@@ -2,16 +2,21 @@
 
 namespace App\Actions\Budgets;
 
-use App\Data\Budget\CreateBudgetData;
+use App\Data\Budget\UpdateBudgetData;
 use App\Models\Budget;
-use App\Models\Category;
 use Illuminate\Validation\ValidationException;
 
-class CreateBudget
+class UpdateBudget
 {
-    public function handle(CreateBudgetData $data): Budget
-    {
-        // Validation
+    public function handle(
+        Budget $budget,
+        UpdateBudgetData $data
+    ): Budget {
+
+        // Use existing values when none are supplied
+        $startDate = $data->startDate ?? $budget->start_date;
+        $endDate   = $data->endDate ?? $budget->end_date;
+        $period    = $data->period ?? $budget->period;
 
         if ($data->amount <= 0) {
             throw ValidationException::withMessages([
@@ -19,42 +24,22 @@ class CreateBudget
             ]);
         }
 
-        if ($data->endDate->lt($data->startDate)) {
+        if ($endDate->lt($startDate)) {
             throw ValidationException::withMessages([
                 'end_date' => 'End date must be after the start date.',
             ]);
         }
 
-        //  Ensure category belongs to user
+        $budget->update([
+            'name' => $data->name,
+            'amount' => $data->amount,
+            'period' => $period,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'alert_percentage' => $data->alertPercentage,
+            'is_active' => $data->isActive,
+        ]);
 
-        $category = Category::query()
-            ->whereKey($data->categoryId)
-            ->where('user_id', $data->userId)
-            ->first();
-
-        if (! $category) {
-            throw ValidationException::withMessages([
-                'category' => 'Invalid category.',
-            ]);
-        }
-
-        // Prevent duplicate budgets
-
-        $exists = Budget::query()
-            ->where('user_id', $data->userId)
-            ->where('category_id', $data->categoryId)
-            ->where('start_date', $data->startDate)
-            ->where('end_date', $data->endDate)
-            ->exists();
-
-        if ($exists) {
-            throw ValidationException::withMessages([
-                'budget' => 'A budget already exists for this period.',
-            ]);
-        }
-
-        // Create Budget
-
-        return Budget::create($data->toArray());
+        return $budget->refresh();
     }
 }

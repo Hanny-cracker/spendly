@@ -1,27 +1,34 @@
 <?php
 
-use App\Models\User;
-use App\Models\RecurringTransaction;
 use App\Actions\RecurringTransactions\DeleteRecurringTransaction;
+use App\Enums\RecurringStatus;
+use App\Models\RecurringTransaction;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
-it('can delete recurring transaction',function(){
-
-    $user=User::factory()->create();
+uses(RefreshDatabase::class);
 
 
-    $recurring=RecurringTransaction::factory()
-        ->for($user)
-        ->create();
+
+it('can delete paused recurring transaction', function(){
+
+
+    $recurring = RecurringTransaction::factory()
+        ->create([
+            'status'=>RecurringStatus::Paused
+        ]);
+
 
 
     app(DeleteRecurringTransaction::class)
         ->handle($recurring);
 
 
+
     expect(
         RecurringTransaction::find($recurring->id)
     )
     ->toBeNull();
+
 
 });

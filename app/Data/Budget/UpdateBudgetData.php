@@ -3,34 +3,27 @@
 namespace App\Data\Budget;
 
 use Carbon\Carbon;
-use App\Concerns\BudgetPeriod;
+use Carbon\CarbonInterface;
+use App\Enums\BudgetPeriod;
 
-
-readonly class CreateBudgetData
+readonly class UpdateBudgetData
 {
     public function __construct(
-        public int $userId,
-        public int $categoryId,
         public string $name,
         public float $amount,
-        public BudgetPeriod $period,
-        public Carbon $startDate,
-        public Carbon $endDate,
-        public int $alertPercentage = 80,
-        public bool $isActive = true,
-    ) {
-    }
 
-    /**
-     * Convert DTO to array for mass assignment.
-     */
+        public int $alertPercentage,
+        public bool $isActive,
+        public ?BudgetPeriod $period = null,
+        public ?CarbonInterface $startDate = null,
+        public ?CarbonInterface $endDate = null,
+    ) {}
+
     public function toArray(): array
     {
         return [
-            'user_id' => $this->userId,
-            'category_id' => $this->categoryId,
             'name' => $this->name,
-            'amount' => $this->amount,
+            'amount' => (float) $this->amount,
             'period' => $this->period,
             'start_date' => $this->startDate,
             'end_date' => $this->endDate,

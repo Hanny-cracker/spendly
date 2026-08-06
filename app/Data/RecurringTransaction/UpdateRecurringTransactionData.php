@@ -7,24 +7,39 @@ namespace App\Data\RecurringTransaction;
 use App\Enums\TransactionType;
 use App\Enums\RecurringFrequency;
 use App\Enums\RecurringStatus;
+use Carbon\CarbonInterface;
 
-final readonly class UpdateRecurringTransactionData
+readonly class UpdateRecurringTransactionData
 {
+
     public function __construct(
 
-        public ?int $accountId = null,
-        public ?int $categoryId = null,
-        public ?string $title = null,
-        public ?string $description = null,
-        public ?float $amount = null,
-        public ?TransactionType $type = null,
-        public ?RecurringFrequency $frequency = null,
-        public ?int $interval = null,
-        public ?\DateTimeInterface $startDate = null,
-        public ?\DateTimeInterface $nextRun = null,
-        public ?\DateTimeInterface $endDate = null,
-        public ?RecurringStatus $status = null,
+        public string $title,
+        public ?string $description,
+        public float $amount,
+        public TransactionType $type,
+        public RecurringFrequency $frequency,
+        public int $interval,
+        public ?CarbonInterface $endDate,
+        public RecurringStatus $status,
 
-    ) {
+    ){}
+
+
+
+    public function toArray():array
+    {
+        return [
+
+            'title'=>$this->title,
+            'description'=>$this->description,
+            'amount'=>$this->amount,
+            'type'=>$this->type,
+            'frequency'=>$this->frequency,
+            'interval'=>$this->interval,
+            'end_date'=>$this->endDate,
+            'status'=>$this->status,
+
+        ];
     }
 }

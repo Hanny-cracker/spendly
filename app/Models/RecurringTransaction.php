@@ -11,6 +11,7 @@ use App\Enums\RecurringFrequency;
 use App\Enums\RecurringStatus;
 use \App\Concerns\HasPublicIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'public_id',
@@ -39,7 +40,7 @@ class RecurringTransaction extends Model
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
+            'amount' => 'float',
             'start_date' => 'date',
             'next_run' => 'date',
             'end_date' => 'date',
@@ -51,7 +52,7 @@ class RecurringTransaction extends Model
     }
 
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -69,38 +70,46 @@ class RecurringTransaction extends Model
     }
 
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
+
     public function isActive(): bool
     {
-        return $this->status->isActive();
+        return $this->status === RecurringStatus::Active;
     }
 
-    public function isPaused(): bool
-    {
-        return $this->status->isPaused();
-    }
-
-    public function hasEnded(): bool
-    {
-        return $this->ends_at?->isPast() ?? false;
-    }
-
-    public function isDue(): bool
-    {
-        return $this->next_run_at->isPast()
-            || $this->next_run_at->isNow();
-    }
-    public function isCompleted(): bool
-    {
-        return $this->status === RecurringStatus::Completed;
-    }
     public function shouldGenerate(): bool
     {
-        return $this->isActive()
-            && ! $this->hasEnded()
-            && $this->isDue();
+        return $this->status === RecurringStatus::Active
+            &&
+            $this->next_run->lte(today());
     }
+
+    // public function isPaused(): bool
+    // {
+    //     return $this->status->isPaused();
+    // }
+
+    // public function hasEnded(): bool
+    // {
+    //     return $this->end_date?->isPast() ?? false;
+    // }
+
+    // public function isDue(): bool
+    // {
+    //     return $this->next_run->isPast()
+    //         || $this->next_run->isNow();
+    // }
+    // public function isCompleted(): bool
+    // {
+    //     return $this->status === RecurringStatus::Completed;
+    // }
+    // public function shouldGenerate(): bool
+    // {
+    //     return $this->isActive()
+    //         && ! $this->hasEnded()
+    //         && $this->isDue();
+    // }
 }

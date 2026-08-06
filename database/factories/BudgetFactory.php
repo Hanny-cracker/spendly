@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use App\Models\Budget;
 use App\Models\Category;
-use App\Concerns\BudgetPeriod;
+use App\Enums\BudgetPeriod;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

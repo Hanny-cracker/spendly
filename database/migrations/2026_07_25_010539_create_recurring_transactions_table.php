@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('amount', 12, 2);
-            $table->enum('type', ['
-                income', 'expense']);
+            $table->enum('type', [
+                'income', 
+                'expense'
+            ]);
             $table->enum('frequency', [
                 'daily',
                 'weekly',
