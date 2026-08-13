@@ -11,6 +11,7 @@ use App\Data\Report\CashFlowReportData;
 use App\Data\Report\DateRangeData;
 use App\Data\Report\ExpenseReportData;
 use App\Data\Report\IncomeReportData;
+use App\Enums\TransactionType;
 
 class ReportService
 {
@@ -54,9 +55,11 @@ class ReportService
      * @return array<int, CategoryReportData>
      */
     public function byCategory(
-        DateRangeData $data
+        DateRangeData $data,
+        TransactionType $type = TransactionType::Expense,
     ): array {
-        return $this->categoryReport->handle($data);
+        return $this->categoryReport
+            ->handle($data, $type);
     }
 
     /**
