@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'end_date',
     'status',
     'last_generated_at',
+    'last_24h_notified_at',
+    'last_6h_notified_at',
 ])]
 class RecurringTransaction extends Model
 {
@@ -42,12 +44,14 @@ class RecurringTransaction extends Model
         return [
             'amount' => 'float',
             'start_date' => 'date',
-            'next_run' => 'date',
+            'next_run' => 'datetime',
             'end_date' => 'date',
             'last_generated_at' => 'datetime',
             'type' => TransactionType::class,
             'frequency' => RecurringFrequency::class,
             'status' => RecurringStatus::class,
+            'last_24h_notified_at' => 'datetime',
+            'last_6h_notified_at' => 'datetime',
         ];
     }
 

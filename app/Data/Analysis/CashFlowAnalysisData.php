@@ -18,12 +18,12 @@ readonly class CashFlowAnalysisData
     public function toArray(): array
     {
         return [
-            'total_income' => $this->totalIncome,
-            'total_expenses' => $this->totalExpenses,
-            'net_cash_flow' => $this->netCashFlow,
-            'income_transaction_count' => $this->incomeTransactionCount,
-            'expense_transaction_count' => $this->expenseTransactionCount,
-            'savings_rate' => $this->savingsRate,
+            'total_income' => (float) $this->totalIncome,
+            'total_expenses' => (float) $this->totalExpenses,
+            'net_cash_flow' => (float) $this->netCashFlow,
+            'income_transaction_count' => (int) $this->incomeTransactionCount,
+            'expense_transaction_count' => (int) $this->expenseTransactionCount,
+            'savings_rate' => (float) $this->savingsRate,
             'status' => $this->status,
             'trend' => $this->trend,
         ];

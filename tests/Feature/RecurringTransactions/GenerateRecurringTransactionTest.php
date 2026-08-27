@@ -1,6 +1,6 @@
 <?php
 use App\Models\User;
-use App\Services\RecurringTransactionService;
+use App\Services\RecurringTransactions\RecurringTransactionService;
 use App\Models\RecurringTransaction;
 
 it('generates a recurring transaction', function(){

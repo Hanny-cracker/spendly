@@ -19,7 +19,6 @@ use App\Models\RecurringTransaction;
 use App\Models\Transaction;
 use App\Models\Budget;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
 /**
  * @property int $id
  * @property string $name

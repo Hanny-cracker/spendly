@@ -13,9 +13,9 @@ readonly class CashFlowReportData
     public function toArray(): array
     {
         return [
-            'income' => $this->income,
-            'expenses' => $this->expenses,
-            'net_cash_flow' => $this->netCashFlow,
+            'income' => (float) $this->income,
+            'expenses' => (float) $this->expenses,
+            'net_cash_flow' => (float) $this->netCashFlow,
         ];
     }
 }

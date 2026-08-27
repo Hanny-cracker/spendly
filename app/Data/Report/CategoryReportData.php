@@ -16,7 +16,7 @@ readonly class CategoryReportData
         return [
             'category_id' => $this->categoryId,
             'category_name' => $this->categoryName,
-            'total' => $this->total,
+            'total' => (float) $this->total,
             'transaction_count' => $this->transactionCount,
         ];
     }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('amount', 12, 2);
             $table->enum('type', [
-                'income', 
+                'income',
                 'expense'
             ]);
             $table->enum('frequency', [
@@ -41,6 +41,8 @@ return new class extends Migration
             $table->timestamp('last_generated_at')->nullable();
             $table->timestamps();
             $table->index('next_run');
+            $table->timestamp('last_24h_notified_at')->nullable();
+            $table->timestamp('last_6h_notified_at')->nullable();
         });
     }
 

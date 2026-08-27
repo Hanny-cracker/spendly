@@ -7,7 +7,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\RecurringTransaction;
-use App\Services\RecurringTransactionService;
+use App\Services\RecurringTransactions\RecurringTransactionService;
 use App\Enums\RecurringStatus;
 
 
