@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-
+use App\Concerns\BelongsToUser;
 use App\Concerns\HasPublicIdentifier;
 use App\Enums\AccountType;
-use App\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Validation\Rule;
 
 #[Fillable(['public_id', 'user_id', 'name', 'type', 'currency', 'opening_balance', 'current_balance', 'color', 'is_default'])]
 class Account extends Model
@@ -32,12 +30,10 @@ class Account extends Model
         ];
     }
 
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
 
     public function transactions(): HasMany
     {
@@ -59,10 +55,16 @@ class Account extends Model
             'to_account_id'
         );
     }
+
     public function recurringTransactions(): HasMany
     {
         return $this->hasMany(
             RecurringTransaction::class
         );
+    }
+
+    public function goalContributions(): HasMany
+    {
+        return $this->hasMany(GoalContribution::class);
     }
 }

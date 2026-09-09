@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Data\Category;
+
 use App\Enums\CategoryType;
 
-
-class UpdateCategoryData
+final readonly class UpdateCategoryData
 {
-
     public function __construct(
 
         public string $name,
@@ -14,6 +13,6 @@ class UpdateCategoryData
         public ?string $icon = null,
         public ?string $color = null,
 
-    ){}
+    ) {}
 
 }

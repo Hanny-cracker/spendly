@@ -1,51 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\RecurringTransactions;
 
-
-use App\Models\Transaction;
+use App\Enums\RecurringStatus;
 use App\Models\RecurringTransaction;
+use Carbon\Carbon;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
-
-class GenerateRecurringTransaction
+class ResumeRecurringTransaction
 {
+    public function handle(RecurringTransaction $recurringTransaction, ?int $userId = null): RecurringTransaction
+    {
+        return DB::transaction(function () use ($recurringTransaction, $userId): RecurringTransaction {
+            $recurringTransaction = RecurringTransaction::query()->lockForUpdate()->findOrFail($recurringTransaction->id);
+            if ($userId !== null && $recurringTransaction->user_id !== $userId) {
+                throw new AuthorizationException;
+            }
+            if ($recurringTransaction->status->isCompleted()) {
+                throw ValidationException::withMessages(['status' => 'A completed recurring schedule cannot be resumed.']);
+            }
 
+            $nextRun = Carbon::parse($recurringTransaction->next_run);
+            while ($nextRun->lte(now())) {
+                $nextRun = $recurringTransaction->frequency->nextRun($nextRun);
+            }
+            $recurringTransaction->update(['status' => RecurringStatus::Active, 'next_run' => $nextRun, 'last_24h_notified_at' => null, 'last_6h_notified_at' => null]);
 
-public function handle(
-    RecurringTransaction $recurring
-): Transaction
-{
-
-
-    $transaction = Transaction::create([
-        'user_id'=>$recurring->user_id,
-        'account_id'=>$recurring->account_id,
-        'category_id'=>$recurring->category_id,
-        'recurring_transaction_id'=>$recurring->id,
-        'title'=>$recurring->title,
-        'description'=>$recurring->description,
-        'amount'=>$recurring->amount,
-        'type'=>$recurring->type,
-        'status'=>'completed',
-        'date'=>today(),
-
-
-    ]);
-
-
-
-    $recurring->update([
-        'last_generated_at'=>now(),
-        'next_run'=>
-            $recurring->frequency
-            ->nextDate(
-                $recurring->next_run
-            ),
-
-    ]);
-
-    return $transaction;
-}
-
-
+            return $recurringTransaction->refresh();
+        });
+    }
 }

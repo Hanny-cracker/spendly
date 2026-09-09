@@ -4,13 +4,13 @@ namespace App\Actions\Analysis;
 
 use App\Data\Analysis\BudgetProgressData;
 use App\Data\Report\DateRangeData;
-use App\Enums\TransactionStatus;
-use App\Enums\TransactionType;
 use App\Models\Budget;
-use App\Models\Transaction;
+use App\Services\Budgets\BudgetSpendingService;
 
 class BudgetProgressAnalysis
 {
+    public function __construct(private BudgetSpendingService $spendingService) {}
+
     /**
      * Analyze budget progress for a date range.
      *
@@ -33,22 +33,10 @@ class BudgetProgressAnalysis
             return [];
         }
 
-        $transactions = Transaction::query()
-            ->where('user_id', $data->userId)
-            ->where('status', TransactionStatus::Completed)
-            ->where('type', TransactionType::Expense)
-            ->whereBetween('date', [
-                $data->startDate,
-                $data->endDate,
-            ])
-            ->get();
-
         $results = [];
 
         foreach ($budgets as $budget) {
-            $spentAmount = (float) $transactions
-                ->where('category_id', $budget->category_id)
-                ->sum('amount');
+            $spentAmount = $this->spendingService->spent($budget);
 
             $budgetAmount = (float) $budget->amount;
 
@@ -60,8 +48,7 @@ class BudgetProgressAnalysis
 
             $status = match (true) {
                 $percentageUsed >= 100 => 'over_budget',
-                $percentageUsed >= 90 => 'critical',
-                $percentageUsed >= 70 => 'warning',
+                $percentageUsed >= $budget->alert_percentage => 'warning',
                 default => 'on_track',
             };
 

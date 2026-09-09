@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'transfer_id', 'recurring_transaction_id', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
+#[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'transfer_id', 'recurring_transaction_id', 'scheduled_for', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
 class Transaction extends Model
 {
     use BelongsToUser;
@@ -28,6 +28,7 @@ class Transaction extends Model
             'status' => TransactionStatus::class,
             'amount' => 'float',
             'date' => 'date',
+            'scheduled_for' => 'datetime',
         ];
     }
 

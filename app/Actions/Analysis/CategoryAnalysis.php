@@ -25,6 +25,7 @@ class CategoryAnalysis
             ->where('user_id', $data->userId)
             ->where('status', TransactionStatus::Completed)
             ->where('type', TransactionType::Expense)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $data->endDate,

@@ -1,476 +1,256 @@
-<div class="space-y-6">
+@php
+    $balance = (float) data_get(
+        $dashboardData,
+        'total_balance',
+        0
+    );
 
-    {{-- Section Header --}}
-    <div>
-        <h2 class="text-lg font-semibold text-gray-900">
-            Financial Overview
+    $income = (float) data_get(
+        $dashboardData,
+        'reports.income.total',
+        0
+    );
+
+    $expenses = (float) data_get(
+        $dashboardData,
+        'reports.expense.total',
+        0
+    );
+
+    $savings = (float) data_get($dashboardData, 'savings_balance', 0);
+    $savingsRate = (float) data_get($dashboardData, 'insights.savings_rate.rate', 0);
+
+    $currency = 'FCFA';
+@endphp
+<section>
+    <div class="mb-4 flex items-center gap-3">
+
+        <h2
+            class="
+                font-mono text-xs font-semibold
+                uppercase tracking-[0.18em]
+                text-stone-500
+            "
+        >
+            Financial overview
         </h2>
 
-        <p class="text-sm text-gray-500">
-            A summary of your financial activity for the selected period.
-        </p>
+        <div class="flex-1 border-t border-dashed border-stone-300"></div>
+
     </div>
 
 
-    {{-- Main Financial Cards --}}
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+
+        {{-- Balance --}}
+        <div
+            class="
+                rounded-2xl
+                border border-stone-200
+                bg-[#fbf8f2]
+                p-4
+                sm:p-5
+            "
+        >
+            <div class="mb-4 flex items-center justify-between">
+
+                <span
+                    class="
+                        text-xs font-medium
+                        uppercase tracking-wider
+                        text-stone-500
+                    "
+                >
+                    Total Balance
+                </span>
+
+                <div
+                    class="
+                        flex h-8 w-8 items-center justify-center
+                        rounded-full bg-stone-100
+                        text-stone-700
+                    "
+                >
+                    ◉
+                </div>
+
+            </div>
+
+            <p
+                class="
+                    font-mono
+                    text-lg font-bold
+                    tracking-tight
+                    text-stone-900
+                    sm:text-2xl
+                "
+            >
+                {{ number_format($balance, 0) }}
+            </p>
+
+            <p class="mt-1 text-xs text-stone-500">
+                {{ $currency }}
+            </p>
+        </div>
+
 
         {{-- Income --}}
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div
+            class="
+                rounded-2xl
+                border border-emerald-200
+                bg-[#fbf8f2]
+                p-4
+                sm:p-5
+            "
+        >
+            <div class="mb-4 flex items-center justify-between">
 
-            <div class="flex items-start justify-between">
+                <span
+                    class="
+                        text-xs font-medium
+                        uppercase tracking-wider
+                        text-stone-500
+                    "
+                >
+                    Income
+                </span>
 
-                <div>
-                    <p class="text-sm font-medium text-gray-500">
-                        Income
-                    </p>
-
-                    <p class="mt-2 text-2xl font-bold text-gray-900">
-                        {{ number_format($dashboardData['reports']['income']['total'] ?? 0, 0) }}
-                    </p>
-                </div>
-
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100">
-                    <svg
-                        class="h-5 w-5 text-green-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 19V5m0 0l-6 6m6-6l6 6"
-                        />
-                    </svg>
+                <div
+                    class="
+                        flex h-8 w-8 items-center justify-center
+                        rounded-full bg-emerald-50
+                        text-emerald-700
+                    "
+                >
+                    ↑
                 </div>
 
             </div>
 
-            <div class="mt-4 flex items-center justify-between text-xs">
+            <p
+                class="
+                    font-mono
+                    text-lg font-bold
+                    tracking-tight
+                    text-emerald-700
+                    sm:text-2xl
+                "
+            >
+                {{ number_format($income, 0) }}
+            </p>
 
-                <span class="text-gray-500">
-                    {{ $dashboardData['reports']['income']['transactionCount'] ?? 0 }}
-                    transactions
-                </span>
-
-                <span class="font-medium text-green-600">
-                    Avg.
-                    {{ number_format($dashboardData['reports']['income']['average'] ?? 0, 0) }}
-                </span>
-
-            </div>
-
+            <p class="mt-1 text-xs text-stone-500">
+                {{ $currency }}
+            </p>
         </div>
 
 
         {{-- Expenses --}}
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-            <div class="flex items-start justify-between">
-
-                <div>
-                    <p class="text-sm font-medium text-gray-500">
-                        Expenses
-                    </p>
-
-                    <p class="mt-2 text-2xl font-bold text-gray-900">
-                        {{ number_format($dashboardData['reports']['expense']['total'] ?? 0, 0) }}
-                    </p>
-                </div>
-
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100">
-                    <svg
-                        class="h-5 w-5 text-red-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 5v14m0 0l6-6m-6 6l-6-6"
-                        />
-                    </svg>
-                </div>
-
-            </div>
-
-            <div class="mt-4 flex items-center justify-between text-xs">
-
-                <span class="text-gray-500">
-                    {{ $dashboardData['reports']['expense']['transactionCount'] ?? 0 }}
-                    transactions
-                </span>
-
-                <span class="font-medium text-red-600">
-                    Avg.
-                    {{ number_format($dashboardData['reports']['expense']['average'] ?? 0, 0) }}
-                </span>
-
-            </div>
-
-        </div>
-
-
-        {{-- Net Cash Flow --}}
-        @php
-            $netCashFlow =
-                $dashboardData['reports']['cash_flow']['netCashFlow'] ?? 0;
-
-            $isPositiveCashFlow = $netCashFlow >= 0;
-        @endphp
-
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-            <div class="flex items-start justify-between">
-
-                <div>
-                    <p class="text-sm font-medium text-gray-500">
-                        Net Cash Flow
-                    </p>
-
-                    <p
-                        class="mt-2 text-2xl font-bold
-                        {{ $isPositiveCashFlow ? 'text-green-600' : 'text-red-600' }}"
-                    >
-                        {{ number_format($netCashFlow, 0) }}
-                    </p>
-                </div>
-
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl
-                    {{ $isPositiveCashFlow ? 'bg-green-100' : 'bg-red-100' }}"
-                >
-                    <svg
-                        class="h-5 w-5
-                        {{ $isPositiveCashFlow ? 'text-green-600' : 'text-red-600' }}"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M3 12h18m-6-6l6 6-6 6"
-                        />
-                    </svg>
-                </div>
-
-            </div>
-
-            <div class="mt-4 flex items-center justify-between text-xs">
-
-                <span class="text-gray-500">
-                    Income − Expenses
-                </span>
+        <div
+            class="
+                rounded-2xl
+                border border-red-200
+                bg-[#fbf8f2]
+                p-4
+                sm:p-5
+            "
+        >
+            <div class="mb-4 flex items-center justify-between">
 
                 <span
-                    class="font-medium
-                    {{ $isPositiveCashFlow ? 'text-green-600' : 'text-red-600' }}"
+                    class="
+                        text-xs font-medium
+                        uppercase tracking-wider
+                        text-stone-500
+                    "
                 >
-                    {{ $isPositiveCashFlow ? 'Positive' : 'Negative' }}
+                    Expenses
                 </span>
+
+                <div
+                    class="
+                        flex h-8 w-8 items-center justify-center
+                        rounded-full bg-red-50
+                        text-red-700
+                    "
+                >
+                    ↓
+                </div>
 
             </div>
 
+            <p
+                class="
+                    font-mono
+                    text-lg font-bold
+                    tracking-tight
+                    text-red-700
+                    sm:text-2xl
+                "
+            >
+                {{ number_format($expenses, 0) }}
+            </p>
+
+            <p class="mt-1 text-xs text-stone-500">
+                {{ $currency }}
+            </p>
         </div>
 
 
-        {{-- Savings Rate --}}
-        @php
-            $savingsRate =
-                $dashboardData['insights']['savings_rate']['rate'] ?? 0;
+        {{-- Savings --}}
+        <div
+            class="
+                rounded-2xl
+                border border-amber-200
+                bg-[#fbf8f2]
+                p-4
+                sm:p-5
+            "
+        >
+            <div class="mb-4 flex items-center justify-between">
 
-            $savings =
-                $dashboardData['insights']['savings_rate']['savings'] ?? 0;
-        @endphp
+                <span
+                    class="
+                        text-xs font-medium
+                        uppercase tracking-wider
+                        text-stone-500
+                    "
+                >
+                    Savings
+                </span>
 
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-            <div class="flex items-start justify-between">
-
-                <div>
-                    <p class="text-sm font-medium text-gray-500">
-                        Savings Rate
-                    </p>
-
-                    <p class="mt-2 text-2xl font-bold text-gray-900">
-                        {{ number_format($savingsRate, 1) }}%
-                    </p>
-                </div>
-
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
-                    <svg
-                        class="h-5 w-5 text-blue-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-10v2m0 8v2m9-6a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
+                <div
+                    class="
+                        flex h-8 w-8 items-center justify-center
+                        rounded-full bg-amber-50
+                        text-amber-700
+                    "
+                >
+                    ◆
                 </div>
 
             </div>
 
-            <div class="mt-4 flex items-center justify-between text-xs">
+            <p
+                class="
+                    font-mono
+                    text-lg font-bold
+                    tracking-tight
+                    text-amber-700
+                    sm:text-2xl
+                "
+            >
+                {{ number_format($savings, 0) }}
+            </p>
 
-                <span class="text-gray-500">
-                    Saved
-                </span>
-
-                <span class="font-medium text-blue-600">
-                    {{ number_format($savings, 0) }}
-                </span>
-
-            </div>
-
+            <p class="mt-1 text-xs text-stone-500">
+                {{ $currency }}
+            </p>
+            <p class="mt-2 text-[11px] font-medium text-stone-500">
+                {{ number_format($savingsRate, 1) }}% saved during this period
+            </p>
         </div>
 
     </div>
-
-
-    {{-- Detailed Financial Summary --}}
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-
-        {{-- Income Breakdown --}}
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-            <div class="mb-5">
-                <h3 class="font-semibold text-gray-900">
-                    Income Summary
-                </h3>
-
-                <p class="mt-1 text-sm text-gray-500">
-                    Income generated during this period.
-                </p>
-            </div>
-
-            <div class="space-y-4">
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Total income
-                    </span>
-
-                    <span class="font-semibold text-gray-900">
-                        {{ number_format($dashboardData['reports']['income']['total'] ?? 0, 0) }}
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Transactions
-                    </span>
-
-                    <span class="font-semibold text-gray-900">
-                        {{ $dashboardData['reports']['income']['transactionCount'] ?? 0 }}
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Average transaction
-                    </span>
-
-                    <span class="font-semibold text-gray-900">
-                        {{ number_format($dashboardData['reports']['income']['average'] ?? 0, 0) }}
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Expense Breakdown --}}
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-            <div class="mb-5">
-                <h3 class="font-semibold text-gray-900">
-                    Expense Summary
-                </h3>
-
-                <p class="mt-1 text-sm text-gray-500">
-                    Spending during this period.
-                </p>
-            </div>
-
-            <div class="space-y-4">
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Total expenses
-                    </span>
-
-                    <span class="font-semibold text-gray-900">
-                        {{ number_format($dashboardData['reports']['expense']['total'] ?? 0, 0) }}
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Transactions
-                    </span>
-
-                    <span class="font-semibold text-gray-900">
-                        {{ $dashboardData['reports']['expense']['transactionCount'] ?? 0 }}
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Average transaction
-                    </span>
-
-                    <span class="font-semibold text-gray-900">
-                        {{ number_format($dashboardData['reports']['expense']['average'] ?? 0, 0) }}
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Cash Flow Summary --}}
-        @php
-            $cashFlow =
-                $dashboardData['reports']['cash_flow'] ?? [];
-
-            $cashFlowIncome =
-                $cashFlow['income'] ?? 0;
-
-            $cashFlowExpenses =
-                $cashFlow['expenses'] ?? 0;
-
-            $cashFlowNet =
-                $cashFlow['netCashFlow'] ?? 0;
-
-            $cashFlowPositive =
-                $cashFlowNet >= 0;
-        @endphp
-
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-            <div class="mb-5">
-                <h3 class="font-semibold text-gray-900">
-                    Cash Flow
-                </h3>
-
-                <p class="mt-1 text-sm text-gray-500">
-                    Money coming in versus money going out.
-                </p>
-            </div>
-
-            <div class="space-y-4">
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Money in
-                    </span>
-
-                    <span class="font-semibold text-green-600">
-                        {{ number_format($cashFlowIncome, 0) }}
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        Money out
-                    </span>
-
-                    <span class="font-semibold text-red-600">
-                        {{ number_format($cashFlowExpenses, 0) }}
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-between border-t pt-4">
-                    <span class="text-sm font-medium text-gray-700">
-                        Net cash flow
-                    </span>
-
-                    <span
-                        class="font-bold
-                        {{ $cashFlowPositive
-                            ? 'text-green-600'
-                            : 'text-red-600' }}"
-                    >
-                        {{ number_format($cashFlowNet, 0) }}
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- Financial Health --}}
-    @php
-        $financialHealth =
-            $dashboardData['insights']['financial_health'] ?? [];
-
-        $healthScore =
-            $financialHealth['score'] ?? 0;
-
-        $healthStatus =
-            $financialHealth['status'] ?? 'unknown';
-
-        $healthStatusLabel = match ($healthStatus) {
-            'excellent' => 'Excellent',
-            'good' => 'Good',
-            'fair' => 'Fair',
-            'poor' => 'Poor',
-            default => ucfirst($healthStatus),
-        };
-    @endphp
-
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-        <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-
-            <div>
-                <h3 class="font-semibold text-gray-900">
-                    Financial Health
-                </h3>
-
-                <p class="mt-1 text-sm text-gray-500">
-                    Overall financial performance for the selected period.
-                </p>
-            </div>
-
-            <div class="flex items-center gap-4">
-
-                <div class="text-right">
-                    <p class="text-xs text-gray-500">
-                        Health Score
-                    </p>
-
-                    <p class="text-2xl font-bold text-gray-900">
-                        {{ $healthScore }}/100
-                    </p>
-                </div>
-
-                <div class="rounded-full bg-gray-100 px-4 py-2">
-                    <span class="text-sm font-semibold text-gray-700">
-                        {{ $healthStatusLabel }}
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
+</section>

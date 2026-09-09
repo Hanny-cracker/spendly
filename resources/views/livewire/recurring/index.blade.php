@@ -1,0 +1,31 @@
+<div class="space-y-7">
+    <section class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div><p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Automation</p><h1 class="mt-1 text-3xl font-semibold">Recurring Transactions</h1><p class="mt-1 text-sm text-stone-500">Automate regular income and expenses.</p></div>
+        <a href="{{ route('recurring.create') }}" class="rounded-xl bg-emerald-700 px-4 py-2.5 text-center text-sm font-semibold text-white">+ New Recurring</a>
+    </section>
+    <section class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        @foreach([['Active',$summary['active']],['Upcoming',$summary['upcoming']],['Expenses',$summary['expenses']],['Income',$summary['income']]] as [$label,$value])
+            <article class="rounded-2xl border border-stone-200 bg-[#fbf8f2] p-4"><p class="text-xs font-medium uppercase tracking-wider text-stone-500">{{ $label }}</p><p class="mt-3 font-mono text-2xl font-bold">{{ $value }}</p></article>
+        @endforeach
+    </section>
+    @if($schedules->isEmpty())
+        <section class="rounded-2xl border border-dashed border-stone-300 bg-[#fbf8f2] px-6 py-12 text-center"><h2 class="font-semibold">No recurring transactions yet</h2><p class="mx-auto mt-2 max-w-lg text-sm text-stone-500">Automate regular payments and income so Spendly can keep your records up to date.</p><a href="{{ route('recurring.create') }}" class="mt-5 inline-flex rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white">Create recurring transaction</a></section>
+    @else
+        <section>
+            <div class="mb-4 flex items-center gap-3"><h2 class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">All Schedules</h2><div class="flex-1 border-t border-dashed border-stone-300"></div></div>
+            <div class="grid gap-4 lg:grid-cols-2">
+                @foreach($schedules as $schedule)
+                    @php($income = $schedule->type->isIncome())
+                    @php($overdue = $schedule->status->isActive() && $schedule->next_run->lt(today()))
+                    <article class="rounded-2xl border border-stone-200 bg-[#fbf8f2] p-5">
+                        <div class="flex items-start justify-between gap-4"><div><h3 class="font-semibold">{{ $schedule->title }}</h3><p class="mt-1 text-xs text-stone-500">{{ $schedule->type->label() }} · {{ $schedule->category?->name ?? 'Uncategorized' }}</p></div><span class="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase {{ $schedule->status->isActive() ? 'bg-emerald-50 text-emerald-700' : ($schedule->status->isPaused() ? 'bg-amber-50 text-amber-700' : 'bg-stone-100 text-stone-600') }}">{{ $schedule->status->label() }}</span></div>
+                        <p class="mt-5 font-mono text-xl font-bold {{ $income ? 'text-emerald-700' : 'text-red-700' }}">{{ $income ? '+' : '−' }}{{ number_format($schedule->amount,0) }} {{ $schedule->account?->currency ?? 'FCFA' }}</p>
+                        <p class="mt-1 text-xs font-medium text-stone-500">{{ $schedule->frequency->label() }} · {{ $schedule->account?->name ?? 'Account unavailable' }}</p>
+                        <dl class="mt-5 grid grid-cols-2 gap-4 border-t border-stone-200 pt-4 text-xs"><div><dt class="text-stone-500">Next run</dt><dd class="mt-1 font-medium {{ $overdue ? 'text-amber-700' : 'text-stone-800' }}">{{ $schedule->next_run->format('d M Y') }}{{ $overdue ? ' · Overdue' : '' }}</dd></div><div><dt class="text-stone-500">Last generated</dt><dd class="mt-1 font-medium">{{ $schedule->last_generated_at?->format('d M Y') ?? 'Never generated' }}</dd></div></dl>
+                        <div class="mt-4 flex justify-end gap-3 text-xs font-semibold"><a href="{{ route('recurring.show',$schedule) }}" class="text-emerald-700">View</a><a href="{{ route('recurring.edit',$schedule) }}" class="text-stone-600">Edit</a>@if($schedule->status->isActive())<button wire:click="pause({{ $schedule->id }})" class="text-stone-600">Pause</button>@elseif($schedule->status->isPaused())<button wire:click="resume({{ $schedule->id }})" class="text-stone-600">Resume</button>@endif</div>
+                    </article>
+                @endforeach
+            </div>
+        </section>
+    @endif
+</div>

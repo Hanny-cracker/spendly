@@ -10,8 +10,7 @@ class DeleteTransfer
 {
     public function __construct(
         private DeleteTransaction $deleteTransaction,
-    ) {
-    }
+    ) {}
 
     public function handle(
         Transfer $transfer
@@ -22,7 +21,7 @@ class DeleteTransfer
             foreach ($transfer->transactions as $transaction) {
 
                 $this->deleteTransaction
-                    ->handle($transaction);
+                    ->handle($transaction, allowTransfer: true);
             }
 
             $transfer->delete();

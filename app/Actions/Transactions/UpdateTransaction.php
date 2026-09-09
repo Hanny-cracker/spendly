@@ -2,28 +2,34 @@
 
 namespace App\Actions\Transactions;
 
-use App\Data\Transaction\CreateTransactionData;
+use App\Data\Transaction\UpdateTransactionData;
+use App\Enums\TransactionStatus;
+use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Services\AccountService;
+use App\Services\Budgets\BudgetSpendingGuard;
 use Illuminate\Support\Facades\DB;
 
 class UpdateTransaction
 {
     public function __construct(
         private AccountService $accountService,
-    ) {
-    }
+        private BudgetSpendingGuard $budgetSpendingGuard,
+    ) {}
 
     public function handle(
         Transaction $transaction,
-        CreateTransactionData $data,
+        UpdateTransactionData $data,
     ): Transaction {
 
         return DB::transaction(function () use (
             $transaction,
             $data
         ) {
+            if ($data->type === TransactionType::Expense && $data->status === TransactionStatus::Completed && $data->transferId === null && $data->categoryId !== null) {
+                $this->budgetSpendingGuard->assertCanSpend($transaction->user_id, $data->categoryId, $data->date, $data->amount, $transaction->id);
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -42,17 +48,14 @@ class UpdateTransaction
             |--------------------------------------------------------------------------
             */
 
-            $this->accountService->adjustBalance(
-
-                account: $oldAccount,
-
-                amount: $transaction->amount,
-
-                type: $transaction->type,
-
-                reverse: true,
-
-            );
+            if ($transaction->status->affectsBalance() && $transaction->type->affectsBalance()) {
+                $this->accountService->adjustBalance(
+                    account: $oldAccount,
+                    amount: $transaction->amount,
+                    type: $transaction->type,
+                    reverse: true,
+                );
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -93,9 +96,9 @@ class UpdateTransaction
             */
 
             /** @var Account $newAccount */
-            $newAccount = Account::findOrFail(
-                $data->accountId
-            );
+            $newAccount = Account::query()
+                ->where('user_id', $transaction->user_id)
+                ->findOrFail($data->accountId);
 
             /*
             |--------------------------------------------------------------------------
@@ -103,15 +106,13 @@ class UpdateTransaction
             |--------------------------------------------------------------------------
             */
 
-            $this->accountService->adjustBalance(
-
-                account: $newAccount,
-
-                amount: $data->amount,
-
-                type: $data->type,
-
-            );
+            if ($data->status->affectsBalance() && $data->type->affectsBalance()) {
+                $this->accountService->adjustBalance(
+                    account: $newAccount,
+                    amount: $data->amount,
+                    type: $data->type,
+                );
+            }
 
             return $transaction
                 ->fresh([
@@ -123,5 +124,4 @@ class UpdateTransaction
         });
 
     }
-
 }

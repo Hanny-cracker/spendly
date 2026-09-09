@@ -1,5 +1,7 @@
 <?php
 
+use App\Data\Dashboard\DashboardData;
+use App\Data\Dashboard\TransactionSummaryData;
 use App\Data\Report\DateRangeData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
@@ -144,11 +146,15 @@ it('shows the complete dashboard result', function () {
     $result = app(DashboardService::class)
         ->summary($data);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Inspect complete result
-    |--------------------------------------------------------------------------
-    */
+    expect($result)
+        ->toBeInstanceOf(DashboardData::class)
+        ->and($result->reports['income']->total)->toBe(500000.0)
+        ->and($result->reports['expense']->total)->toBe(320000.0)
+        ->and($result->budgets)->toHaveCount(2)
+        ->and($result->recentTransactions)->toHaveCount(3)
+        ->and($result->recentTransactions[0])->toBeInstanceOf(TransactionSummaryData::class)
+        ->and($result->recentTransactions[0]->date)->toBe('2026-01-15');
 
-    dd($result);
+    expect(collect($result->accounts)->pluck('name'))
+        ->toContain('Main Account');
 });

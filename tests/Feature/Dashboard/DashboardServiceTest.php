@@ -1,10 +1,15 @@
 <?php
 
-use App\Data\Report\DateRangeData;
 use App\Data\Analysis\BudgetProgressData;
+use App\Data\Dashboard\AccountSummaryData;
+use App\Data\Dashboard\TransactionSummaryData;
+use App\Data\Report\DateRangeData;
+use App\Enums\AccountType;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Models\Account;
 use App\Models\Budget;
+use App\Models\Goal;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Dashboard\DashboardService;
@@ -13,7 +18,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 
 uses(RefreshDatabase::class);
-
 
 it('generates complete dashboard data', function () {
 
@@ -57,10 +61,15 @@ it('generates complete dashboard data', function () {
     expect($result->budgets)
         ->toBeArray();
 
+    expect($result->accounts)
+        ->toBeArray();
+
+    expect($result->totalBalance)
+        ->toBeFloat();
+
     expect($result->recentTransactions)
         ->toBeArray();
 });
-
 
 it('only returns budget progress belonging to the user', function () {
 
@@ -99,12 +108,10 @@ it('only returns budget progress belonging to the user', function () {
     expect(
         collect($result->budgets)
             ->every(
-                fn (BudgetProgressData $budget) =>
-                    $budget instanceof BudgetProgressData
+                fn (BudgetProgressData $budget) => $budget instanceof BudgetProgressData
             )
     )->toBeTrue();
 });
-
 
 it('excludes inactive budgets', function () {
 
@@ -140,7 +147,6 @@ it('excludes inactive budgets', function () {
         ->toBeInstanceOf(BudgetProgressData::class);
 });
 
-
 it('returns calculated budget progress', function () {
 
     $user = User::factory()->create();
@@ -149,6 +155,7 @@ it('returns calculated budget progress', function () {
         'user_id' => $user->id,
         'name' => 'Food Budget',
         'amount' => 100000,
+        'alert_percentage' => 70,
         'is_active' => true,
         'start_date' => '2026-01-01',
         'end_date' => '2026-01-31',
@@ -197,20 +204,19 @@ it('returns calculated budget progress', function () {
         ->toBe('warning');
 });
 
-
 it('only returns recent transactions belonging to the user', function () {
 
     $user = User::factory()->create();
 
     $otherUser = User::factory()->create();
 
-    Transaction::factory()
+    $userTransactions = Transaction::factory()
         ->count(3)
         ->create([
             'user_id' => $user->id,
         ]);
 
-    Transaction::factory()
+    $otherTransactions = Transaction::factory()
         ->count(2)
         ->create([
             'user_id' => $otherUser->id,
@@ -226,17 +232,16 @@ it('only returns recent transactions belonging to the user', function () {
         ->summary($data);
 
     expect($result->recentTransactions)
-        ->toHaveCount(3);
+        ->toHaveCount(3)
+        ->each->toBeInstanceOf(TransactionSummaryData::class);
 
-    expect(
-        collect($result->recentTransactions)
-            ->every(
-                fn ($transaction) =>
-                    $transaction->user_id === $user->id
-            )
-    )->toBeTrue();
+    $resultIds = collect($result->recentTransactions)->pluck('id')->sort()->values()->all();
+
+    expect($resultIds)
+        ->toBe($userTransactions->pluck('id')->sort()->values()->all())
+        ->and(array_intersect($resultIds, $otherTransactions->pluck('id')->all()))
+        ->toBe([]);
 });
-
 
 it('limits recent transactions to ten', function () {
 
@@ -260,7 +265,6 @@ it('limits recent transactions to ten', function () {
     expect($result->recentTransactions)
         ->toHaveCount(10);
 });
-
 
 it('orders recent transactions newest first', function () {
 
@@ -292,7 +296,6 @@ it('orders recent transactions newest first', function () {
         ->toBe($old->id);
 });
 
-
 it('rejects an invalid date range', function () {
 
     $user = User::factory()->create();
@@ -307,4 +310,151 @@ it('rejects an invalid date range', function () {
         fn () => app(DashboardService::class)
             ->summary($data)
     )->toThrow(ValidationException::class);
+});
+
+it('calculates the total balance from the users accounts', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+
+    Account::factory()->create([
+        'user_id' => $user->id,
+        'current_balance' => 150000,
+    ]);
+
+    Account::factory()->create([
+        'user_id' => $user->id,
+        'current_balance' => 85000,
+    ]);
+
+    Account::factory()->create([
+        'user_id' => $otherUser->id,
+        'current_balance' => 900000,
+    ]);
+
+    $data = new DateRangeData(
+        userId: $user->id,
+        startDate: now()->startOfMonth(),
+        endDate: now()->endOfMonth(),
+    );
+
+    $dashboard = app(DashboardService::class)
+        ->summary($data);
+
+    expect($dashboard->totalBalance)
+        ->toBe(235000.0);
+});
+
+it('only includes accounts belonging to the user', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+
+    $user->accounts()->delete();
+
+    $account = Account::factory()->create([
+        'user_id' => $user->id,
+        'name' => 'My Bank',
+        'current_balance' => 100000,
+    ]);
+
+    Account::factory()->create([
+        'user_id' => $otherUser->id,
+        'name' => 'Other Bank',
+        'current_balance' => 900000,
+    ]);
+
+    $data = new DateRangeData(
+        userId: $user->id,
+        startDate: now()->startOfMonth(),
+        endDate: now()->endOfMonth(),
+    );
+
+    $dashboard = app(DashboardService::class)
+        ->summary($data);
+
+    expect($dashboard->accounts)
+        ->toHaveCount(1)
+        ->and($dashboard->accounts[0])
+        ->toBeInstanceOf(AccountSummaryData::class)
+        ->and($dashboard->accounts[0]->id)
+        ->toBe($account->id)
+        ->and($dashboard->totalBalance)
+        ->toBe(100000.0);
+});
+
+it('returns a zero balance and no accounts when the user has no accounts', function () {
+    $user = User::factory()->create();
+
+    $user->accounts()->delete();
+
+    $data = new DateRangeData(
+        userId: $user->id,
+        startDate: now()->startOfMonth(),
+        endDate: now()->endOfMonth(),
+    );
+
+    $dashboard = app(DashboardService::class)
+        ->summary($data);
+
+    expect($dashboard->accounts)
+        ->toBe([])
+        ->and($dashboard->totalBalance)
+        ->toBe(0.0);
+});
+
+it('orders the default account first', function () {
+    $user = User::factory()->create();
+
+    $user->accounts()->delete();
+
+    Account::factory()->create([
+        'user_id' => $user->id,
+        'name' => 'Alpha Wallet',
+        'is_default' => false,
+    ]);
+
+    $defaultAccount = Account::factory()->create([
+        'user_id' => $user->id,
+        'name' => 'Zulu Wallet',
+        'is_default' => true,
+    ]);
+
+    $data = new DateRangeData(
+        userId: $user->id,
+        startDate: now()->startOfMonth(),
+        endDate: now()->endOfMonth(),
+    );
+
+    $dashboard = app(DashboardService::class)
+        ->summary($data);
+
+    expect($dashboard->accounts[0]->id)
+        ->toBe($defaultAccount->id);
+});
+
+it('uses only savings account balances for dashboard savings', function () {
+    $user = User::factory()->create();
+    $user->accounts()->delete();
+
+    Account::factory()->for($user)->create(['name' => 'Cash', 'type' => AccountType::Cash, 'current_balance' => 100000]);
+    Account::factory()->for($user)->create(['name' => 'Bank', 'type' => AccountType::Bank, 'current_balance' => 300000]);
+    Account::factory()->for($user)->create(['name' => 'Savings', 'type' => AccountType::Savings, 'current_balance' => 175000]);
+    Account::factory()->for($user)->create(['name' => 'My Savings', 'type' => AccountType::Bank, 'current_balance' => 25000]);
+
+    $dashboard = app(DashboardService::class)->summary(new DateRangeData($user->id, now()->startOfMonth(), now()->endOfMonth()));
+
+    expect($dashboard->totalBalance)->toBe(600000.0)
+        ->and($dashboard->savingsBalance)->toBe(175000.0);
+});
+
+it('returns goal savings separately from account savings', function () {
+    $user = User::factory()->create();
+    Account::factory()->for($user)->savings()->create(['current_balance' => 100000]);
+    Goal::factory()->for($user)->create(['name' => 'Laptop', 'target_amount' => 300000, 'current_amount' => 100000]);
+    Goal::factory()->for($user)->create(['name' => 'Emergency Fund', 'target_amount' => 200000, 'current_amount' => 50000]);
+
+    $dashboard = app(DashboardService::class)->summary(new DateRangeData($user->id, now()->startOfMonth(), now()->endOfMonth()));
+
+    expect($dashboard->savingsBalance)->toBe(100000.0)
+        ->and($dashboard->goalSavings['total'])->toBe(150000.0)
+        ->and($dashboard->goalSavings['goals'])->toHaveCount(2);
 });

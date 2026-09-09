@@ -20,7 +20,7 @@ function savingsRateDateRange(User $user): DateRangeData
     );
 }
 
-it('calculates savings and savings rate', function () {
+it('does not treat unspent cash flow as savings activity', function () {
 
     $user = User::factory()->create();
 
@@ -52,10 +52,10 @@ it('calculates savings and savings rate', function () {
         ->toBe(300000.0);
 
     expect($result['savings'])
-        ->toBe(200000.0);
+        ->toBe(0.0);
 
     expect($result['rate'])
-        ->toBe(40.0);
+        ->toBe(0.0);
 });
 
 it('returns zero savings rate when there is no income', function () {
@@ -78,7 +78,7 @@ it('returns zero savings rate when there is no income', function () {
         ->toBe(0.0);
 
     expect($result['savings'])
-        ->toBe(-100000.0);
+        ->toBe(0.0);
 
     expect($result['rate'])
         ->toBe(0.0);

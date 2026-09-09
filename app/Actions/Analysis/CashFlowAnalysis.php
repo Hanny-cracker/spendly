@@ -10,6 +10,8 @@ use App\Models\Transaction;
 
 class CashFlowAnalysis
 {
+    public function __construct(private SavingsAnalysis $savingsAnalysis) {}
+
     public function handle(DateRangeData $data): CashFlowAnalysisData
     {
         $data->validate();
@@ -17,6 +19,7 @@ class CashFlowAnalysis
         $transactions = Transaction::query()
             ->where('user_id', $data->userId)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $data->endDate,
@@ -39,18 +42,7 @@ class CashFlowAnalysis
 
         $expenseTransactionCount = $expenseTransactions->count();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Savings Rate
-        |--------------------------------------------------------------------------
-        |
-        | Savings rate = (Income - Expenses) / Income × 100
-        |
-        */
-
-        $savingsRate = $totalIncome > 0
-            ? ($netCashFlow / $totalIncome) * 100
-            : 0;
+        $savingsRate = $this->savingsAnalysis->handle($data)->savingsRate;
 
         /*
         |--------------------------------------------------------------------------
@@ -160,6 +152,7 @@ class CashFlowAnalysis
         $transactions = Transaction::query()
             ->where('user_id', $userId)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $startDate,
                 $endDate,

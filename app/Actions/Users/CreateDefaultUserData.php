@@ -11,15 +11,12 @@ use App\Enums\CategoryType;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-
 class CreateDefaultUserData
 {
-
     public function __construct(
         private CreateAccount $createAccount,
         private CreateCategory $createCategory,
     ) {}
-
 
     /**
      * Create the initial financial setup
@@ -34,12 +31,10 @@ class CreateDefaultUserData
         });
     }
 
-
-
     private function createAccounts(User $user): void
     {
 
-        foreach (config('spendly.default_accounts') as $account) {
+        foreach (config('spendly.default_accounts') as $index => $account) {
 
             $this->createAccount->handle(
                 new CreateAccountData(
@@ -48,25 +43,21 @@ class CreateDefaultUserData
                     type: AccountType::from(
                         $account['type']
                     ),
-                    currency: $user->currency ?? 'USD',
+                    currency: $user->currency ?? 'FCFA',
                     openingBalance: 0,
-                    isDefault: true,
+                    isDefault: $index === 0,
                 )
 
             );
         }
     }
 
-
-
     private function createCategories(User $user): void
     {
 
         foreach (
-            config('spendly.default_categories')
-            as $type => $categories
+            config('spendly.default_categories') as $type => $categories
         ) {
-
 
             foreach ($categories as $category) {
                 $this->createCategory->handle(

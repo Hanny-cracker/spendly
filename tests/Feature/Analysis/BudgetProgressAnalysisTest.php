@@ -24,6 +24,7 @@ it('calculates budget progress', function () {
         'category_id' => $category->id,
         'name' => 'Food Budget',
         'amount' => 100000,
+        'alert_percentage' => 70,
         'period' => BudgetPeriod::Monthly,
         'start_date' => '2026-01-01',
         'end_date' => '2026-01-31',

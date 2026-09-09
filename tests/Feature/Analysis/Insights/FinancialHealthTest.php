@@ -1,13 +1,13 @@
 <?php
 
 use App\Actions\Analysis\Insights\FinancialHealth;
-use App\Actions\Analysis\Insights\SavingsRate;
-use App\Actions\Analysis\Insights\SpendingTrend;
 use App\Data\Analysis\CashFlowAnalysisData;
 use App\Data\Report\DateRangeData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\Transfer;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,9 +23,24 @@ function financialHealthDateRange(User $user): DateRangeData
     );
 }
 
+function recordFinancialHealthSaving(User $user, float $amount): void
+{
+    $cash = Account::factory()->for($user)->cash()->create();
+    $savings = Account::factory()->for($user)->savings()->create();
+    Transfer::query()->create([
+        'user_id' => $user->id,
+        'from_account_id' => $cash->id,
+        'to_account_id' => $savings->id,
+        'amount' => $amount,
+        'reference' => fake()->uuid(),
+        'date' => '2026-01-20',
+    ]);
+}
+
 it('returns excellent financial health for strong finances', function () {
 
     $user = User::factory()->create();
+    recordFinancialHealthSaving($user, 300000);
 
     Transaction::factory()
         ->for($user)
@@ -152,6 +167,7 @@ it('returns poor financial health when spending exceeds income', function () {
 it('returns fair health for moderate finances', function () {
 
     $user = User::factory()->create();
+    recordFinancialHealthSaving($user, 100000);
 
     Transaction::factory()
         ->for($user)

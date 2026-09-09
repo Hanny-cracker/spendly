@@ -29,6 +29,7 @@ readonly class CreateRecurringTransactionData
         public ?CarbonInterface $endDate,
 
         public RecurringStatus $status,
+        public string $scheduledTime = '00:00',
     ) {}
 
     public function toArray(): array
@@ -51,6 +52,7 @@ readonly class CreateRecurringTransactionData
             'end_date' => $this->endDate,
 
             'status' => $this->status,
+            'scheduled_time' => $this->scheduledTime,
         ];
     }
 }

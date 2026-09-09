@@ -2,18 +2,17 @@
 
 namespace App\Data\Budget;
 
-use Carbon\Carbon;
-use Carbon\CarbonInterface;
 use App\Enums\BudgetPeriod;
+use Carbon\CarbonInterface;
 
 readonly class UpdateBudgetData
 {
     public function __construct(
         public string $name,
         public float $amount,
-
         public int $alertPercentage,
         public bool $isActive,
+        public ?int $categoryId = null,
         public ?BudgetPeriod $period = null,
         public ?CarbonInterface $startDate = null,
         public ?CarbonInterface $endDate = null,
@@ -23,6 +22,7 @@ readonly class UpdateBudgetData
     {
         return [
             'name' => $this->name,
+            'category_id' => $this->categoryId,
             'amount' => (float) $this->amount,
             'period' => $this->period,
             'start_date' => $this->startDate,

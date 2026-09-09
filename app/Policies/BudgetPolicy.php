@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Budget;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class BudgetPolicy
 {
@@ -27,9 +26,9 @@ class BudgetPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Budget $budget): bool
+    public function create(User $user): bool
     {
-        return $budget->user_id === $user->id;
+        return true;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Account;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AccountPolicy
 {
@@ -27,9 +26,9 @@ class AccountPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Account $account): bool
+    public function create(User $user): bool
     {
-        return $account->user_id === $user->id;
+        return true;
     }
 
     /**
@@ -39,6 +38,7 @@ class AccountPolicy
     {
         return $account->user_id === $user->id;
     }
+
     /**
      * Determine whether the user can delete the model.
      */

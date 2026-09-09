@@ -3,13 +3,14 @@
 namespace Database\Factories;
 
 use App\Concerns\ForUser;
-use App\Models\User;
 use App\Enums\AccountType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AccountFactory extends Factory
 {
     use ForUser;
+
     public function definition(): array
     {
         return [
@@ -30,7 +31,7 @@ class AccountFactory extends Factory
 
     public function cash(): static
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'type' => AccountType::Cash,
             'name' => 'Cash',
         ]);
@@ -38,15 +39,23 @@ class AccountFactory extends Factory
 
     public function bank(): static
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'type' => AccountType::Bank,
             'name' => 'Bank',
         ]);
     }
 
+    public function savings(): static
+    {
+        return $this->state(fn () => [
+            'type' => AccountType::Savings,
+            'name' => 'Savings',
+        ]);
+    }
+
     public function default(): static
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'is_default' => true,
         ]);
     }

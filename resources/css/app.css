@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .scrollbar-hidden {
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hidden::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@media print {
+    body { background: white !important; }
+    aside, header, .report-controls, [wire\:loading] { display: none !important; }
+    main { max-width: none !important; padding: 0 !important; }
+    [data-report-content] { color: #1c1917; }
+    [data-report-content] section, [data-report-content] article { break-inside: avoid; }
+}

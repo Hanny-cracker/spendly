@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\RecurringTransactions;
 
-use App\Services\RecurringTransactions\RecurringTransactionNotificationService;
 use App\Actions\Transactions\CreateTransaction;
 use App\Data\Transaction\CreateTransactionData;
 use App\Enums\RecurringStatus;
 use App\Enums\TransactionStatus;
+use App\Exceptions\RecurringOccurrenceNotDueException;
 use App\Models\RecurringTransaction;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -21,87 +21,45 @@ class RecurringTransactionService
         protected RecurringTransactionNotificationService $notificationService,
     ) {}
 
-    public function generate(
-        RecurringTransaction $recurringTransaction
-    ): Transaction {
+    public function generate(RecurringTransaction $recurringTransaction): Transaction
+    {
+        [$transaction, $schedule, $scheduledFor] = DB::transaction(function () use ($recurringTransaction): array {
+            $schedule = RecurringTransaction::query()->lockForUpdate()->findOrFail($recurringTransaction->id);
 
-        return DB::transaction(function () use ($recurringTransaction) {
+            if (! $schedule->shouldGenerate()) {
+                throw new RecurringOccurrenceNotDueException('The recurring occurrence is not due.');
+            }
 
-            /*
-             |--------------------------------------------------------------------------
-             | Create transaction
-             |--------------------------------------------------------------------------
-             */
+            $scheduledFor = Carbon::parse($schedule->next_run);
+            $transaction = $this->createTransaction->handle(new CreateTransactionData(
+                userId: $schedule->user_id,
+                accountId: $schedule->account_id,
+                categoryId: $schedule->category_id,
+                recurringTransactionId: $schedule->id,
+                title: $schedule->title,
+                description: $schedule->description,
+                amount: (float) $schedule->amount,
+                type: $schedule->type,
+                date: $scheduledFor->copy(),
+                status: TransactionStatus::Completed,
+            ));
+            $transaction->update(['scheduled_for' => $scheduledFor]);
 
-            $transaction = $this->createTransaction->handle(
-                new CreateTransactionData(
-                    userId: $recurringTransaction->user_id,
-                    accountId: $recurringTransaction->account_id,
-                    categoryId: $recurringTransaction->category_id,
-                    recurringTransactionId: $recurringTransaction->id,
-                    title: $recurringTransaction->title,
-                    description: $recurringTransaction->description,
-                    amount: (float) $recurringTransaction->amount,
-                    type: $recurringTransaction->type,
-                    date: Carbon::instance(now()),
-                    status: TransactionStatus::Completed,
-                )
-            );
-
-            /*
-             |--------------------------------------------------------------------------
-             | Calculate next run
-             |--------------------------------------------------------------------------
-             */
-
-            $this->updateNextRun(
-                $recurringTransaction
-            );
-
-            /*
-             |--------------------------------------------------------------------------
-             | Notify user
-             |--------------------------------------------------------------------------
-             */
-
-            $this->notificationService->generated(
-                $recurringTransaction
-            );
-
-            return $transaction;
-        });
-    }
-
-    private function updateNextRun(
-        RecurringTransaction $recurring
-    ): void {
-
-        $nextRun = $recurring->frequency->nextRun(
-            Carbon::parse($recurring->next_run)
-        );
-
-        $recurring->update([
-            'next_run' => $nextRun,
-            'last_generated_at' => now(),
-
-            /*
-             * Reset notification tracking for
-             * the next occurrence.
-             */
-            'last_24h_notified_at' => null,
-            'last_6h_notified_at' => null,
-        ]);
-
-        if (
-            $recurring->end_date
-            &&
-            $nextRun->greaterThan(
-                $recurring->end_date
-            )
-        ) {
-            $recurring->update([
-                'status' => RecurringStatus::Completed,
+            $nextRun = $schedule->frequency->nextRun($scheduledFor);
+            $completed = $schedule->end_date !== null && $nextRun->startOfDay()->gt($schedule->end_date);
+            $schedule->update([
+                'next_run' => $nextRun,
+                'last_generated_at' => now(),
+                'last_24h_notified_at' => null,
+                'last_6h_notified_at' => null,
+                'status' => $completed ? RecurringStatus::Completed : RecurringStatus::Active,
             ]);
-        }
+
+            return [$transaction->refresh(), $schedule->refresh(), $scheduledFor];
+        });
+
+        $this->notificationService->generated($schedule, $scheduledFor);
+
+        return $transaction;
     }
 }

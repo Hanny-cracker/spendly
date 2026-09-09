@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'frequency',
     'interval',
     'start_date',
+    'scheduled_time',
     'next_run',
     'end_date',
     'status',
@@ -87,8 +88,8 @@ class RecurringTransaction extends Model
     public function shouldGenerate(): bool
     {
         return $this->status === RecurringStatus::Active
-            &&
-            $this->next_run->lte(today());
+            && $this->next_run->lte(now())
+            && (! $this->end_date || $this->next_run->startOfDay()->lte($this->end_date));
     }
 
     // public function isPaused(): bool

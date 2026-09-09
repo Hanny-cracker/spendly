@@ -23,6 +23,7 @@ class TransactionQueries
         return Transaction::query()
             ->where('user_id', $data->userId)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $data->endDate,
@@ -70,6 +71,7 @@ class TransactionQueries
         return Transaction::query()
             ->where('user_id', $data->userId)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $data->endDate,

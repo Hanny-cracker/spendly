@@ -4,6 +4,7 @@ use App\Actions\Analysis\CashFlowAnalysis;
 use App\Data\Report\DateRangeData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -143,6 +144,7 @@ it('calculates income and expense transaction counts', function () {
 it('calculates savings rate', function () {
 
     $user = User::factory()->create();
+    $savingsAccount = Account::factory()->for($user)->savings()->create();
 
     Transaction::factory()
         ->for($user)
@@ -150,6 +152,7 @@ it('calculates savings rate', function () {
             'type' => TransactionType::Income,
             'status' => TransactionStatus::Completed,
             'amount' => 10000,
+            'account_id' => $savingsAccount->id,
             'date' => '2026-01-10',
         ]);
 
@@ -166,7 +169,7 @@ it('calculates savings rate', function () {
         ->handle(cashFlowDateRange($user));
 
     expect($result->savingsRate)
-        ->toBe(70.0);
+        ->toBe(100.0);
 });
 
 it('returns positive status when cash flow is positive', function () {

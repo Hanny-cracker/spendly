@@ -21,7 +21,7 @@ return new class extends Migration
                 'credit_card',
                 'savings'
             ]);
-            $table->string('currency')->default('USD');
+            $table->string('currency')->default('FCFA');
             $table->decimal('opening_balance', 12, 2)->default(0);
             $table->decimal('current_balance', 12, 2)->default(0);
             $table->string('color')->nullable();
