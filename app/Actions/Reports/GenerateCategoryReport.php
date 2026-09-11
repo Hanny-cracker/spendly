@@ -21,7 +21,7 @@ class GenerateCategoryReport
         ?TransactionType $type = TransactionType::Expense,
     ): array {
 
-        $transactions = $this->queries->withCategories($data,$type);
+        $transactions = $this->queries->withCategories($data, $type);
 
         return $transactions
             ->groupBy('category_id')

@@ -2,9 +2,9 @@
 
 namespace Tests\Helpers;
 
-use App\Models\User;
-use App\Models\Transfer;
 use App\Models\Account;
+use App\Models\Transfer;
+use App\Models\User;
 
 trait CreatesTransfers
 {

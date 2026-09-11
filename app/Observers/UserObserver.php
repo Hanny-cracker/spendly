@@ -2,16 +2,16 @@
 
 namespace App\Observers;
 
-use App\Models\User;
 use App\Actions\Users\CreateDefaultUserData;
+use App\Models\User;
 
 class UserObserver
 {
     public bool $afterCommit = true;
+
     public function __construct(
         private CreateDefaultUserData $createDefaultUserData
     ) {}
-
 
     /**
      * Handle the User "created" event.
@@ -21,6 +21,7 @@ class UserObserver
         $this->createDefaultUserData
             ->handle($user);
     }
+
     /**
      * Handle the User "updated" event.
      */

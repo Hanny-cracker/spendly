@@ -2,13 +2,14 @@
 
 namespace App\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LogicException;
 
 trait HasPublicIdentifier
 {
     /**
-     * @mixin \Illuminate\Database\Eloquent\Model
+     * @mixin Model
      */
     protected static function bootHasPublicIdentifier(): void
     {
@@ -17,7 +18,7 @@ trait HasPublicIdentifier
                 return;
             }
 
-            if (! defined(static::class . '::PUBLIC_ID_PREFIX')) {
+            if (! defined(static::class.'::PUBLIC_ID_PREFIX')) {
                 throw new LogicException(
                     sprintf(
                         'Model [%s] must define a PUBLIC_ID_PREFIX constant.',
@@ -26,7 +27,7 @@ trait HasPublicIdentifier
                 );
             }
 
-            $model->public_id = static::PUBLIC_ID_PREFIX . '_' . Str::ulid();
+            $model->public_id = static::PUBLIC_ID_PREFIX.'_'.Str::ulid();
         });
     }
 

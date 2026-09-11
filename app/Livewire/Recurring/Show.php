@@ -57,7 +57,7 @@ class Show extends Component
         Gate::authorize('view', $this->recurringTransaction);
         $history = $this->recurringTransaction->transactions()->where('user_id', auth()->id())->with(['account:id,name,currency', 'category:id,name'])->latest('date')->latest('id')->paginate(10);
 
-        return view('livewire.recurring.show', ['history' => $history])
+        return view('livewire.recurring.show', ['history' => $history, 'displayTimezone' => auth()->user()->timezone()])
             ->layout('layouts.app', ['title' => $this->recurringTransaction->title.' | Spendly', 'header' => 'Recurring']);
     }
 }

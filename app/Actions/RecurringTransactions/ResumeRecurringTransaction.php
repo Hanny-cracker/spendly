@@ -6,13 +6,15 @@ namespace App\Actions\RecurringTransactions;
 
 use App\Enums\RecurringStatus;
 use App\Models\RecurringTransaction;
-use Carbon\Carbon;
+use App\Services\RecurringTransactions\RecurringScheduleTime;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ResumeRecurringTransaction
 {
+    public function __construct(private RecurringScheduleTime $scheduleTime) {}
+
     public function handle(RecurringTransaction $recurringTransaction, ?int $userId = null): RecurringTransaction
     {
         return DB::transaction(function () use ($recurringTransaction, $userId): RecurringTransaction {
@@ -24,9 +26,13 @@ class ResumeRecurringTransaction
                 throw ValidationException::withMessages(['status' => 'A completed recurring schedule cannot be resumed.']);
             }
 
-            $nextRun = Carbon::parse($recurringTransaction->next_run);
+            $nextRun = $recurringTransaction->next_run->copy()->utc();
             while ($nextRun->lte(now())) {
-                $nextRun = $recurringTransaction->frequency->nextRun($nextRun);
+                $nextRun = $this->scheduleTime->nextRunUtc(
+                    $nextRun,
+                    $recurringTransaction->frequency,
+                    $recurringTransaction->timezone,
+                );
             }
             $recurringTransaction->update(['status' => RecurringStatus::Active, 'next_run' => $nextRun, 'last_24h_notified_at' => null, 'last_6h_notified_at' => null]);
 

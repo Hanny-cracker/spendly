@@ -75,7 +75,6 @@
 //         ->toBe(75000.0);
 // });
 
-
 use App\Data\Report\DateRangeData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
@@ -102,7 +101,6 @@ beforeEach(function () {
         endDate: $this->endDate,
     );
 });
-
 
 it('returns expense transactions', function () {
 
@@ -132,7 +130,6 @@ it('returns expense transactions', function () {
         ->toBe(500.0);
 });
 
-
 it('returns income transactions', function () {
 
     Transaction::factory()
@@ -161,7 +158,6 @@ it('returns income transactions', function () {
         ->toBe(1000.0);
 });
 
-
 it('can calculate total expenses from returned transactions', function () {
 
     Transaction::factory()
@@ -187,7 +183,6 @@ it('can calculate total expenses from returned transactions', function () {
     expect($transactions->sum('amount'))
         ->toBe(2000.0);
 });
-
 
 it('can calculate total income from returned transactions', function () {
 
@@ -215,7 +210,6 @@ it('can calculate total income from returned transactions', function () {
         ->toBe(5000.0);
 });
 
-
 it('returns the correct expense count', function () {
 
     Transaction::factory()
@@ -232,7 +226,6 @@ it('returns the correct expense count', function () {
     expect($transactions)->toHaveCount(3);
 });
 
-
 it('returns the correct income count', function () {
 
     Transaction::factory()
@@ -248,7 +241,6 @@ it('returns the correct income count', function () {
 
     expect($transactions)->toHaveCount(2);
 });
-
 
 it('returns transactions with categories', function () {
 
@@ -279,7 +271,6 @@ it('returns transactions with categories', function () {
         ->toBe($category->id);
 });
 
-
 it('filters transactions by date range', function () {
 
     Transaction::factory()
@@ -302,7 +293,6 @@ it('filters transactions by date range', function () {
 
     expect($transactions)->toHaveCount(1);
 });
-
 
 it('excludes pending transactions', function () {
 
@@ -331,7 +321,6 @@ it('excludes pending transactions', function () {
         ->and($transactions->first()->amount)
         ->toBe(500.0);
 });
-
 
 it('does not return transactions belonging to another user', function () {
 

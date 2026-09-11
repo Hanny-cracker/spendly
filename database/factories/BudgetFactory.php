@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Enums\BudgetPeriod;
 use App\Models\Budget;
 use App\Models\Category;
-use App\Enums\BudgetPeriod;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use Illuminate\Support\Str;
 
 class BudgetFactory extends Factory
 {

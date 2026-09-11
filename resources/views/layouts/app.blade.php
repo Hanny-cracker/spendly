@@ -44,6 +44,7 @@
 
 <div
     x-data="{ sidebarOpen: false }"
+    @keydown.escape.window="sidebarOpen = false"
     class="min-h-screen"
 >
 
@@ -68,6 +69,7 @@
         SIDEBAR
     ============================================== --}}
     <aside
+        id="application-sidebar"
         x-cloak
         class="
             fixed inset-y-0 left-0 z-50
@@ -158,6 +160,8 @@
                         "
 
                         aria-label="Open sidebar"
+                        :aria-expanded="sidebarOpen"
+                        aria-controls="application-sidebar"
                     >
 
                         <svg
@@ -211,146 +215,16 @@
                 <div class="ml-auto flex items-center gap-2">
 
                     {{-- Notification --}}
-                    <button
-                        type="button"
-
-                        class="
-                            relative
-
-                            flex h-10 w-10
-                            items-center
-                            justify-center
-
-                            rounded-xl
-
-                            text-stone-600
-
-                            transition
-                            hover:bg-[#fbf8f2]
-                            hover:text-stone-900
-                        "
-
-                        aria-label="Notifications"
-                    >
-
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            class="h-5 w-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="
-                                    M18 8a6 6 0 0 0-12 0
-                                    c0 7-3 7-3 9
-                                    h18
-                                    c0-2-3-2-3-9
-                                "
-                            />
-
-                            <path
-                                stroke-linecap="round"
-                                d="M10 21h4"
-                            />
-                        </svg>
-
-                        {{-- Notification indicator --}}
-                        <span
-                            class="
-                                absolute
-                                right-2 top-2
-
-                                h-2 w-2
-
-                                rounded-full
-                                bg-emerald-600
-
-                                ring-2
-                                ring-[#f5f2eb]
-                            "
-                        ></span>
-
-                    </button>
-
-
-                    {{-- Desktop user --}}
                     @auth
-
-                        <div
-                            class="
-                                hidden
-                                items-center
-                                gap-3
-
-                                border-l
-                                border-stone-200
-
-                                pl-4
-
-                                sm:flex
-                            "
-                        >
-
-                            <div class="text-right">
-
-                                <p
-                                    class="
-                                        max-w-40
-                                        truncate
-
-                                        text-sm
-                                        font-semibold
-                                        text-stone-800
-                                    "
-                                >
-                                    {{ auth()->user()->name }}
-                                </p>
-
-                                <p
-                                    class="
-                                        max-w-40
-                                        truncate
-
-                                        text-xs
-                                        text-stone-500
-                                    "
-                                >
-                                    {{ auth()->user()->email }}
-                                </p>
-
-                            </div>
+                        <livewire:notifications.dropdown />
+                    @endauth
 
 
-                            <div
-                                class="
-                                    flex h-9 w-9
-                                    items-center
-                                    justify-center
-
-                                    rounded-full
-
-                                    bg-emerald-700
-
-                                    text-sm
-                                    font-semibold
-                                    text-white
-                                "
-                            >
-                                {{ strtoupper(
-                                    substr(
-                                        auth()->user()->name ?? 'U',
-                                        0,
-                                        1
-                                    )
-                                ) }}
-                            </div>
-
+                    {{-- Account menu --}}
+                    @auth
+                        <div class="border-l border-stone-200 pl-2 sm:pl-4">
+                            <x-account-menu />
                         </div>
-
                     @endauth
 
                 </div>

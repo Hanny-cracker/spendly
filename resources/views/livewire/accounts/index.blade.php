@@ -6,17 +6,10 @@
             <p class="mt-1 text-sm text-stone-500">Manage your cash, bank, mobile money and other accounts.</p>
         </div>
 
-        @if (Route::has('accounts.create'))
-            <a href="{{ route('accounts.create') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 md:w-auto">
+        <a href="{{ route('accounts.create') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 md:w-auto">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M12 5v14M5 12h14" /></svg>
                 Add Account
-            </a>
-        @else
-            <span aria-disabled="true" title="Account creation is coming next" class="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white opacity-60 md:w-auto">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M12 5v14M5 12h14" /></svg>
-                Add Account
-            </span>
-        @endif
+        </a>
     </section>
 
     <section class="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -57,11 +50,9 @@
                         </div>
                         <p class="mt-7 font-mono text-2xl font-bold tracking-tight {{ $account['current_balance'] < 0 ? 'text-red-700' : 'text-stone-900' }}">{{ number_format($account['current_balance'], 0) }}</p>
                         <p class="mt-1 text-xs font-medium text-stone-500">{{ $account['currency'] }}</p>
-                        @if (Route::has('accounts.show'))
-                            <div class="mt-6 border-t border-stone-200 pt-4">
-                                <a href="{{ route('accounts.show', $account['public_id']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800">View account <span aria-hidden="true">&rarr;</span></a>
-                            </div>
-                        @endif
+                        <div class="mt-6 border-t border-stone-200 pt-4">
+                            <a href="{{ route('accounts.show', $account['public_id']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800">View account <span aria-hidden="true">&rarr;</span></a>
+                        </div>
                     </article>
                 @endforeach
             </div>
@@ -72,9 +63,7 @@
                 </div>
                 <h3 class="mt-4 text-sm font-semibold text-stone-900">No accounts yet</h3>
                 <p class="mt-1 text-sm text-stone-500">Add your first account to start tracking your money.</p>
-                @if (Route::has('accounts.create'))
-                    <a href="{{ route('accounts.create') }}" class="mt-5 inline-flex items-center rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800">Add Account</a>
-                @endif
+                <a href="{{ route('accounts.create') }}" class="mt-5 inline-flex items-center rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800">Add Account</a>
             </div>
         @endif
     </section>

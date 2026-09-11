@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Concerns\BelongsToUser;
 use App\Concerns\HasPublicIdentifier;
 use App\Enums\GoalStatus;
+use Carbon\Carbon;
 use Database\Factories\GoalFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read Carbon|null $target_date
+ * @property-read GoalStatus $status
+ */
 #[Fillable(['public_id', 'user_id', 'name', 'description', 'target_amount', 'current_amount', 'target_date', 'status'])]
 class Goal extends Model
 {

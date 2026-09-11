@@ -2,13 +2,13 @@
 
 namespace Tests\Helpers;
 
-use App\Models\User;
-use App\Models\Category;
 use App\Enums\CategoryType;
+use App\Models\Category;
+use App\Models\User;
 
 trait CreatesCategories
 {
-protected function createCategory(
+    protected function createCategory(
 
         User $user,
         string $name = 'Food',
@@ -17,12 +17,11 @@ protected function createCategory(
 
     ): Category {
 
-
         return Category::factory()
             ->for($user)
             ->create(array_merge([
 
-                'name'=>$name,
+                'name' => $name,
                 'type' => $type,
 
             ], $attributes));

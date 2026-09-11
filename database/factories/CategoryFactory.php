@@ -3,13 +3,14 @@
 namespace Database\Factories;
 
 use App\Concerns\ForUser;
-use App\Models\User;
 use App\Enums\CategoryType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CategoryFactory extends Factory
 {
     use ForUser;
+
     public function definition(): array
     {
         return [
@@ -23,7 +24,7 @@ class CategoryFactory extends Factory
 
     public function income(): static
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'type' => CategoryType::Income,
             'name' => 'Salary',
         ]);
@@ -31,7 +32,7 @@ class CategoryFactory extends Factory
 
     public function expense(): static
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'type' => CategoryType::Expense,
             'name' => 'Food',
         ]);

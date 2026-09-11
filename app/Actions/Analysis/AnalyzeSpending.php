@@ -6,7 +6,6 @@ use App\Data\Analysis\CategorySpendingData;
 use App\Data\Analysis\SpendingAnalysisData;
 use App\Data\Report\DateRangeData;
 use App\Queries\Analysis\SpendingQueries;
-use Carbon\CarbonInterface;
 
 class AnalyzeSpending
 {

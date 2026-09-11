@@ -43,7 +43,7 @@ test('users can not authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('navigation menu can be rendered', function () {
+test('authenticated account menus can be rendered', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user);
@@ -52,7 +52,12 @@ test('navigation menu can be rendered', function () {
 
     $response
         ->assertOk()
-        ->assertSeeVolt('layout.navigation');
+        ->assertSee($user->name)
+        ->assertSee('aria-controls="application-sidebar"', false)
+        ->assertSee('@keydown.escape.window="sidebarOpen = false"', false)
+        ->assertSee(route('settings'))
+        ->assertSee(route('logout'))
+        ->assertSee('Log out');
 });
 
 test('users can logout', function () {

@@ -13,8 +13,8 @@ readonly class CreateBudgetData
         public string $name,
         public float $amount,
         public BudgetPeriod $period,
-    public CarbonInterface $startDate,
-    public CarbonInterface $endDate,
+        public CarbonInterface $startDate,
+        public CarbonInterface $endDate,
         public int $alertPercentage = 80,
         public bool $isActive = true,
     ) {}

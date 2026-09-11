@@ -2,16 +2,21 @@
 
 namespace App\Models;
 
-use \App\Concerns\HasPublicIdentifier;
+use App\Concerns\BelongsToUser;
+use App\Concerns\HasPublicIdentifier;
+use App\Enums\BudgetPeriod;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Concerns\BelongsToUser;
-use App\Enums\BudgetPeriod;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
+/**
+ * @property-read BudgetPeriod $period
+ * @property-read Carbon $start_date
+ * @property-read Carbon $end_date
+ */
 #[Fillable([
     'public_id',
     'user_id',
@@ -29,9 +34,8 @@ class Budget extends Model
     use BelongsToUser;
     use HasFactory;
     use HasPublicIdentifier;
+
     protected const PUBLIC_ID_PREFIX = 'bud';
-
-
 
     /**
      * Attribute casting.
@@ -60,7 +64,7 @@ class Budget extends Model
         return $this->belongsTo(Category::class);
     }
 
-//  Query Scopes
+    //  Query Scopes
 
     /**
      * Only active budgets.

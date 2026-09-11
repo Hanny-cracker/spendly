@@ -1,8 +1,11 @@
 <?php
 
+use App\Data\Analysis\CashFlowAnalysisData;
+use App\Data\Analysis\IncomeAnalysisData;
+use App\Data\Analysis\SpendingAnalysisData;
 use App\Data\Report\DateRangeData;
-use App\Services\Analysis\AnalysisService;
 use App\Models\User;
+use App\Services\Analysis\AnalysisService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -28,7 +31,7 @@ it('generates spending analysis', function () {
 
     expect($result)
         ->toBeInstanceOf(
-            \App\Data\Analysis\SpendingAnalysisData::class
+            SpendingAnalysisData::class
         );
 });
 
@@ -43,7 +46,7 @@ it('generates income analysis', function () {
 
     expect($result)
         ->toBeInstanceOf(
-            \App\Data\Analysis\IncomeAnalysisData::class
+            IncomeAnalysisData::class
         );
 });
 
@@ -58,7 +61,7 @@ it('generates cash flow analysis', function () {
 
     expect($result)
         ->toBeInstanceOf(
-            \App\Data\Analysis\CashFlowAnalysisData::class
+            CashFlowAnalysisData::class
         );
 });
 
@@ -94,17 +97,17 @@ it('generates a complete analysis summary', function () {
 
     expect($result['spending'])
         ->toBeInstanceOf(
-            \App\Data\Analysis\SpendingAnalysisData::class
+            SpendingAnalysisData::class
         );
 
     expect($result['income'])
         ->toBeInstanceOf(
-            \App\Data\Analysis\IncomeAnalysisData::class
+            IncomeAnalysisData::class
         );
 
     expect($result['cash_flow'])
         ->toBeInstanceOf(
-            \App\Data\Analysis\CashFlowAnalysisData::class
+            CashFlowAnalysisData::class
         );
 
     expect($result['categories'])

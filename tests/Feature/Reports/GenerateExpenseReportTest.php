@@ -2,9 +2,9 @@
 
 use App\Actions\Reports\GenerateExpenseReport;
 use App\Data\Report\DateRangeData;
+use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Account;
-use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +24,7 @@ it('generates an expense report', function () {
         'account_id' => $account->id,
         'amount' => 1000,
         'type' => TransactionType::Expense,
-        'status' => \App\Enums\TransactionStatus::Completed,
+        'status' => TransactionStatus::Completed,
         'date' => now(),
     ]);
 
@@ -33,7 +33,7 @@ it('generates an expense report', function () {
         'account_id' => $account->id,
         'amount' => 2000,
         'type' => TransactionType::Expense,
-        'status' => \App\Enums\TransactionStatus::Completed,
+        'status' => TransactionStatus::Completed,
         'date' => now(),
     ]);
 

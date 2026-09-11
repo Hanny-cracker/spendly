@@ -62,6 +62,7 @@ test('user can delete their account', function () {
 
     $component = Volt::test('profile.delete-user-form')
         ->set('password', 'password')
+        ->set('confirmation', 'DELETE')
         ->call('deleteUser');
 
     $component

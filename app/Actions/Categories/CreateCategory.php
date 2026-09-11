@@ -5,10 +5,8 @@ namespace App\Actions\Categories;
 use App\Data\Category\CreateCategoryData;
 use App\Models\Category;
 
-
 class CreateCategory
 {
-
     public function handle(
         CreateCategoryData $data
     ): Category {

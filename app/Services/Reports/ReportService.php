@@ -2,12 +2,12 @@
 
 namespace App\Services\Reports;
 
-use App\Actions\Reports\GenerateCategoryReport;
 use App\Actions\Reports\GenerateCashFlowReport;
+use App\Actions\Reports\GenerateCategoryReport;
 use App\Actions\Reports\GenerateExpenseReport;
 use App\Actions\Reports\GenerateIncomeReport;
-use App\Data\Report\CategoryReportData;
 use App\Data\Report\CashFlowReportData;
+use App\Data\Report\CategoryReportData;
 use App\Data\Report\DateRangeData;
 use App\Data\Report\ExpenseReportData;
 use App\Data\Report\IncomeReportData;

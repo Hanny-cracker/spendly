@@ -12,7 +12,6 @@ enum AccountType: string
     use HasEnumHelpers;
     use HasEnumMetadata;
 
-
     case Cash = 'cash';
 
     case Bank = 'bank';
@@ -22,8 +21,6 @@ enum AccountType: string
     case CreditCard = 'credit_card';
 
     case Savings = 'savings';
-
-
 
     protected function metadata(): array
     {
@@ -36,14 +33,12 @@ enum AccountType: string
                 'description' => 'Physical cash money.',
             ],
 
-
             self::Bank => [
                 'label' => 'Bank',
                 'color' => 'blue',
                 'icon' => 'heroicon-o-building-library',
                 'description' => 'Money stored in a bank account.',
             ],
-
 
             self::MobileMoney => [
                 'label' => 'Mobile Money',
@@ -52,14 +47,12 @@ enum AccountType: string
                 'description' => 'Mobile wallet account.',
             ],
 
-
             self::CreditCard => [
                 'label' => 'Credit Card',
                 'color' => 'purple',
                 'icon' => 'heroicon-o-credit-card',
                 'description' => 'Credit card account.',
             ],
-
 
             self::Savings => [
                 'label' => 'Savings',

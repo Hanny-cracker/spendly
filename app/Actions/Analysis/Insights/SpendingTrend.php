@@ -10,6 +10,9 @@ use Carbon\CarbonInterface;
 
 class SpendingTrend
 {
+    /**
+     * @return array{current_total: float, previous_total: float, change: float, percentage_change: float, status: string}
+     */
     public function handle(DateRangeData $data): array
     {
         $data->validate();
@@ -64,6 +67,7 @@ class SpendingTrend
             ->where('user_id', $userId)
             ->where('type', TransactionType::Expense)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $startDate,
                 $endDate,

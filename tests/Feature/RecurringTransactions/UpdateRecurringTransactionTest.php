@@ -2,51 +2,41 @@
 
 use App\Actions\RecurringTransactions\UpdateRecurringTransaction;
 use App\Data\RecurringTransaction\UpdateRecurringTransactionData;
-use App\Enums\TransactionType;
 use App\Enums\RecurringFrequency;
 use App\Enums\RecurringStatus;
+use App\Enums\TransactionType;
 use App\Models\RecurringTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-
 uses(RefreshDatabase::class);
 
-
-
-it('can update a recurring transaction', function(){
-
+it('can update a recurring transaction', function () {
 
     $recurring = RecurringTransaction::factory()
         ->create();
 
-
-
     $data = new UpdateRecurringTransactionData(
 
-        title:'Updated Netflix',
+        title: 'Updated Netflix',
 
-        description:'Updated',
+        description: 'Updated',
 
-        amount:7000,
+        amount: 7000,
 
-        type:TransactionType::Expense,
+        type: TransactionType::Expense,
 
-        frequency:RecurringFrequency::Monthly,
+        frequency: RecurringFrequency::Monthly,
 
-        interval:1,
+        interval: 1,
 
-        endDate:null,
+        endDate: null,
 
-        status:RecurringStatus::Active,
+        status: RecurringStatus::Active,
 
     );
 
-
-
     $updated = app(UpdateRecurringTransaction::class)
-        ->handle($recurring,$data);
-
-
+        ->handle($recurring, $data);
 
     expect($updated->fresh())
 
@@ -55,6 +45,5 @@ it('can update a recurring transaction', function(){
 
         ->amount
         ->toBe(7000.0);
-
 
 });

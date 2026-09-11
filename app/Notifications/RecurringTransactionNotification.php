@@ -5,11 +5,14 @@ namespace App\Notifications;
 use App\Data\Budget\BudgetAvailabilityData;
 use App\Enums\RecurringTransactionNotificationType;
 use App\Models\RecurringTransaction;
+use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 
+#[DeleteWhenMissingModels]
 class RecurringTransactionNotification extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -28,29 +31,33 @@ class RecurringTransactionNotification extends Notification implements ShouldQue
 
     public function toDatabase(object $notifiable): array
     {
+        $timezone = $notifiable instanceof User
+            ? $notifiable->timezone()
+            : $this->recurringTransaction->timezone;
+
         return [
             'type' => $this->type->value,
 
-            'recurring_transaction_id' =>
-                $this->recurringTransaction->id,
+            'notification_title' => $this->notificationTitle(),
 
-            'title' =>
-                $this->recurringTransaction->title,
+            'recurring_transaction_id' => $this->recurringTransaction->id,
 
-            'amount' =>
-                (float) $this->recurringTransaction->amount,
+            'title' => $this->recurringTransaction->title,
 
-            'next_run' =>
-                $this->recurringTransaction->next_run
-                    ?->toDateTimeString(),
+            'amount' => (float) $this->recurringTransaction->amount,
 
-            'scheduled_for' => $this->scheduledFor?->toDateTimeString(),
+            'next_run' => $this->recurringTransaction->next_run
+                ?->copy()
+                ?->setTimezone($timezone)
+                ?->toDateTimeString(),
 
-            'message' => $this->message(),
+            'scheduled_for' => $this->scheduledFor?->copy()->setTimezone($timezone)->toDateTimeString(),
+
+            'message' => $this->message($timezone),
         ];
     }
 
-    protected function message(): string
+    protected function message(string $timezone): string
     {
         $title = $this->recurringTransaction->title;
 
@@ -61,22 +68,30 @@ class RecurringTransactionNotification extends Notification implements ShouldQue
 
         return match ($this->type) {
 
-            RecurringTransactionNotificationType::Upcoming24Hours =>
-                "Your recurring transaction '{$title}' "
-                . "of {$amount} is scheduled within 24 hours.",
+            RecurringTransactionNotificationType::Upcoming24Hours => "Your recurring transaction '{$title}' "
+                ."of {$amount} is scheduled within 24 hours.",
 
-            RecurringTransactionNotificationType::Upcoming6Hours =>
-                "Your recurring transaction '{$title}' "
-                . "of {$amount} is scheduled within 6 hours.",
+            RecurringTransactionNotificationType::Upcoming6Hours => "Your recurring transaction '{$title}' "
+                ."of {$amount} is scheduled within 6 hours.",
 
-            RecurringTransactionNotificationType::Generated =>
-                "Your recurring {$this->recurringTransaction->type->value} '{$title}' "
-                . "of {$amount} scheduled for {$this->scheduledFor?->format('d M Y \a\t H:i')} was recorded successfully.",
+            RecurringTransactionNotificationType::Generated => "Your recurring {$this->recurringTransaction->type->value} '{$title}' "
+                ."of {$amount} scheduled for {$this->scheduledFor?->copy()->setTimezone($timezone)->format('d M Y \a\t H:i')} was recorded successfully.",
 
-            RecurringTransactionNotificationType::BudgetFailure =>
-                "Your recurring expense '{$title}' of {$amount} was not recorded. "
-                . "The {$this->budgetAvailability?->categoryName} budget has only "
-                . number_format((float) $this->budgetAvailability?->remaining, 2).' FCFA remaining.',
+            RecurringTransactionNotificationType::BudgetFailure => "Your recurring expense '{$title}' of {$amount} was not recorded. "
+                ."The {$this->budgetAvailability?->categoryName} budget has only "
+                .number_format((float) $this->budgetAvailability?->remaining, 2).' FCFA remaining.',
+        };
+    }
+
+    private function notificationTitle(): string
+    {
+        return match ($this->type) {
+            RecurringTransactionNotificationType::Upcoming24Hours,
+            RecurringTransactionNotificationType::Upcoming6Hours => 'Recurring transaction upcoming',
+            RecurringTransactionNotificationType::Generated => $this->recurringTransaction->type->isIncome()
+                ? 'Recurring deposit recorded'
+                : 'Recurring expense recorded',
+            RecurringTransactionNotificationType::BudgetFailure => 'Recurring expense not recorded',
         };
     }
 }

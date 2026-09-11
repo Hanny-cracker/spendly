@@ -9,6 +9,7 @@ use App\Enums\RecurringStatus;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\RecurringTransaction;
+use App\Services\RecurringTransactions\RecurringScheduleTime;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ use Illuminate\Validation\ValidationException;
 
 class UpdateRecurringTransaction
 {
+    public function __construct(private RecurringScheduleTime $scheduleTime) {}
+
     public function handle(
         RecurringTransaction $recurringTransaction,
         UpdateRecurringTransactionData $data
@@ -34,6 +37,12 @@ class UpdateRecurringTransaction
                     'amount' => 'Amount must be greater than zero.',
                 ]);
 
+            }
+
+            if ($data->scheduledTime !== null && ! preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $data->scheduledTime)) {
+                throw ValidationException::withMessages([
+                    'scheduledTime' => 'The scheduled time must use the 24-hour HH:MM format.',
+                ]);
             }
 
             $hasHistory = $recurringTransaction->transactions()->exists();
@@ -67,16 +76,23 @@ class UpdateRecurringTransaction
 
             $values = $data->toArray();
             $scheduledTime = $data->scheduledTime ?? substr((string) $recurringTransaction->scheduled_time, 0, 5);
+            $timezone = $this->scheduleTime->timezoneForUser($recurringTransaction->user_id);
             $scheduleChanged = $data->frequency !== $recurringTransaction->frequency
                 || $scheduledTime !== substr((string) $recurringTransaction->scheduled_time, 0, 5)
+                || $timezone !== $recurringTransaction->timezone
                 || ($data->startDate && ! $data->startDate->equalTo($recurringTransaction->start_date));
 
+            $values['timezone'] = $timezone;
+
             if (! $hasHistory) {
-                $values['next_run'] = Carbon::parse($startDate)->startOfDay()->setTimeFromTimeString($scheduledTime);
+                $values['next_run'] = $this->scheduleTime->localToUtc($startDate, $scheduledTime, $timezone);
             } elseif ($scheduleChanged) {
-                $nextRun = Carbon::parse($recurringTransaction->next_run)->setTimeFromTimeString($scheduledTime);
+                $nextRun = $this->scheduleTime
+                    ->toLocal($recurringTransaction->next_run, $timezone)
+                    ->setTimeFromTimeString($scheduledTime)
+                    ->utc();
                 while ($nextRun->lte(now())) {
-                    $nextRun = $data->frequency->nextRun($nextRun);
+                    $nextRun = $this->scheduleTime->nextRunUtc($nextRun, $data->frequency, $timezone);
                 }
                 $values['next_run'] = $nextRun;
             }

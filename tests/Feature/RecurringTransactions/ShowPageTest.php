@@ -15,6 +15,7 @@ it('protects show and renders only linked generated history newest first', funct
     $otherSchedule = RecurringTransaction::factory()->for($user)->for($account)->for($category)->create(['title' => 'Other Schedule']);
     $service = app(RecurringTransactionService::class);
     $first = $service->generate($schedule);
+    $schedule->update(['next_run' => now()]);
     $second = $service->generate($schedule->refresh());
     $foreign = $service->generate($otherSchedule);
 

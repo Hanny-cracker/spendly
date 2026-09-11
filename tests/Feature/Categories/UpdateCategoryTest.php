@@ -4,21 +4,18 @@ use App\Actions\Categories\UpdateCategory;
 use App\Data\Category\UpdateCategoryData;
 use App\Enums\CategoryType;
 
-it('can update a category', function(){
+it('can update a category', function () {
 
     $user = $this->createUser();
 
-
     $category = $this->createCategory(
-        user:$user
+        user: $user
     );
-
 
     $data = new UpdateCategoryData(
-        name:'Groceries',
+        name: 'Groceries',
         type: CategoryType::Expense
     );
-
 
     $updated = app(UpdateCategory::class)
         ->handle(
@@ -26,9 +23,7 @@ it('can update a category', function(){
             $data
         );
 
-
     expect($updated->name)
         ->toBe('Groceries');
-
 
 });

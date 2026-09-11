@@ -5,25 +5,26 @@ namespace App\Models;
 use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['user_id', 'from_account_id', 'to_account_id', 'amount', 'reference', 'description', 'date'])]
 class Transfer extends Model
 {
-
     protected $casts = [
         'amount' => 'float',
         'date' => 'date',
     ];
 
-
-    public function user()
+    /** @return BelongsTo<User, self> */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-
-    public function fromAccount()
+    /** @return BelongsTo<Account, self> */
+    public function fromAccount(): BelongsTo
     {
         return $this->belongsTo(
             Account::class,
@@ -31,8 +32,8 @@ class Transfer extends Model
         );
     }
 
-
-    public function toAccount()
+    /** @return BelongsTo<Account, self> */
+    public function toAccount(): BelongsTo
     {
         return $this->belongsTo(
             Account::class,
@@ -40,7 +41,8 @@ class Transfer extends Model
         );
     }
 
-    public function transactions()
+    /** @return HasMany<Transaction, self> */
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }

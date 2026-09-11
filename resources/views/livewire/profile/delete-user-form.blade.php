@@ -1,23 +1,30 @@
 <?php
 
 use App\Livewire\Actions\Logout;
+use App\Actions\Users\DeleteUserAccount;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
 new class extends Component
 {
     public string $password = '';
+    public string $confirmation = '';
 
     /**
      * Delete the currently authenticated user.
      */
-    public function deleteUser(Logout $logout): void
+    public function deleteUser(): void
     {
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
+            'confirmation' => ['required', 'in:DELETE'],
         ]);
 
-        tap(Auth::user(), $logout(...))->delete();
+        $user = Auth::user();
+        abort_unless($user instanceof \App\Models\User, 401);
+
+        app(Logout::class)();
+        app(DeleteUserAccount::class)->handle($user);
 
         $this->redirect('/', navigate: true);
     }
@@ -63,6 +70,12 @@ new class extends Component
                 />
 
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+
+            <div class="mt-6">
+                <x-input-label for="confirmation" value="{{ __('Enter DELETE to confirm') }}" />
+                <x-text-input wire:model="confirmation" id="confirmation" name="confirmation" type="text" class="mt-1 block w-3/4" autocomplete="off" />
+                <x-input-error :messages="$errors->get('confirmation')" class="mt-2" />
             </div>
 
             <div class="mt-6 flex justify-end">

@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@source "../../resources/**/*.blade.php";
+@source "../../resources/**/*.js";
+@source "../../resources/**/*.ts";
+@source "../../app/**/*.php";
 
 @layer utilities {
     .scrollbar-hidden {
@@ -13,9 +16,28 @@
 }
 
 @media print {
-    body { background: white !important; }
-    aside, header, .report-controls, [wire\:loading] { display: none !important; }
-    main { max-width: none !important; padding: 0 !important; }
-    [data-report-content] { color: #1c1917; }
-    [data-report-content] section, [data-report-content] article { break-inside: avoid; }
+    body {
+        background: white !important;
+    }
+
+    aside,
+    header,
+    .report-controls,
+    [wire\:loading] {
+        display: none !important;
+    }
+
+    main {
+        max-width: none !important;
+        padding: 0 !important;
+    }
+
+    [data-report-content] {
+        color: #1c1917;
+    }
+
+    [data-report-content] section,
+    [data-report-content] article {
+        break-inside: avoid;
+    }
 }

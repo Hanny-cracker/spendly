@@ -3,20 +3,21 @@
 namespace Database\Factories;
 
 use App\Concerns\ForUser;
-use App\Models\User;
 use App\Models\Account;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TransactionFactory extends Factory
 {
     use ForUser;
+
     public function definition(): array
     {
         return [
             'user_id' => User::factory(),
             'account_id' => Account::factory(),
-            'category_id'=>Category::factory(),
+            'category_id' => Category::factory(),
             'transfer_id' => null,
             'title' => fake()->sentence(3),
             'description' => fake()->sentence(),
@@ -25,9 +26,8 @@ class TransactionFactory extends Factory
             'date' => now(),
             'status' => 'completed',
         ];
-        
-    }
 
+    }
 
     public function forUser(User $user): static
     {
@@ -36,14 +36,12 @@ class TransactionFactory extends Factory
         ]);
     }
 
-
     public function expense(): static
     {
         return $this->state(fn () => [
             'type' => 'expense',
         ]);
     }
-
 
     public function income(): static
     {

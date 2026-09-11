@@ -8,7 +8,6 @@ use Carbon\Carbon;
 
 final readonly class CreateTransactionData
 {
-
     public function __construct(
         public int $userId,
         public int $accountId,

@@ -19,7 +19,9 @@ it('allows an authenticated user to render the accounts page', function () {
         ->get(route('accounts'))
         ->assertOk()
         ->assertSee('Accounts')
-        ->assertSee('Add Account');
+        ->assertSee('Add Account')
+        ->assertSee('href="'.route('accounts.create').'"', false)
+        ->assertDontSee('Account creation is coming next');
 });
 
 it('redirects guests to login', function () {
@@ -84,6 +86,7 @@ it('renders the empty state when the user has no accounts', function () {
         ->assertOk()
         ->assertSee('No accounts yet')
         ->assertSee('Add your first account to start tracking your money.')
+        ->assertSee('href="'.route('accounts.create').'"', false)
         ->assertSee('>0<', false);
 });
 

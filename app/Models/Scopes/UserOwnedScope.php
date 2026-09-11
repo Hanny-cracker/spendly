@@ -16,7 +16,7 @@ class UserOwnedScope implements Scope
     {
         if (Auth::check()) {
             $builder->where(
-                $model->getTable() . '.user_id',
+                $model->getTable().'.user_id',
                 Auth::id()
             );
         }

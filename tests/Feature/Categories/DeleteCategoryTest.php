@@ -3,55 +3,45 @@
 use App\Actions\Categories\DeleteCategory;
 use App\Models\Category;
 
+it('can delete a category without transactions', function () {
 
-it('can delete a category without transactions', function(){
+    $user = $this->createUser();
 
-    $user=$this->createUser();
-
-
-    $category=$this->createCategory(
-        user:$user
+    $category = $this->createCategory(
+        user: $user
     );
-
 
     app(DeleteCategory::class)
         ->handle($category);
 
-
     expect(
         Category::find($category->id)
     )
-    ->toBeNull();
-
+        ->toBeNull();
 
 });
 
-it('cannot delete category with transactions', function(){
+it('cannot delete category with transactions', function () {
 
-    $user=$this->createUser();
+    $user = $this->createUser();
 
-
-    $category=$this->createCategory(
-        user:$user
+    $category = $this->createCategory(
+        user: $user
     );
 
-
-    $account=$this->createAccount(
-        user:$user
+    $account = $this->createAccount(
+        user: $user
     );
-
 
     $this->createTransaction(
-        user:$user,
-        account:$account,
-        category:$category
+        user: $user,
+        account: $account,
+        category: $category
     );
 
-
-    expect(fn()=> app(DeleteCategory::class)
+    expect(fn () => app(DeleteCategory::class)
         ->handle($category)
     )
-    ->toThrow(Exception::class);
-
+        ->toThrow(Exception::class);
 
 });

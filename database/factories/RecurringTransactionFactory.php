@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class RecurringTransactionFactory extends Factory
 {
     use ForUser;
+
     /**
      * Define the model's default state.
      *
@@ -35,7 +36,8 @@ class RecurringTransactionFactory extends Factory
             'frequency' => RecurringFrequency::Monthly,
             'interval' => 1,
             'start_date' => today(),
-            'next_run' => today(),
+            'scheduled_time' => '08:00',
+            'next_run' => now()->subMinute(),
             'status' => RecurringStatus::Active,
         ];
     }

@@ -12,6 +12,10 @@ class FinancialHealth
         protected SpendingTrend $spendingTrend,
     ) {}
 
+    /**
+     * @param  array{concentration_level?: string}  $concentration
+     * @return array<string, mixed>
+     */
     public function handle(
         DateRangeData $data,
         CashFlowAnalysisData $cashFlow,
@@ -40,10 +44,8 @@ class FinancialHealth
             'cash_flow' => $cashFlow->netCashFlow,
             'cash_flow_status' => $cashFlow->status,
             'spending_trend' => $trend['status'],
-            'spending_change_percentage' =>
-            $trend['percentage_change'],
-            'concentration_level' =>
-            $concentration['concentration_level'] ?? 'low',
+            'spending_change_percentage' => $trend['percentage_change'],
+            'concentration_level' => $concentration['concentration_level'] ?? 'low',
         ];
     }
 
@@ -114,4 +116,3 @@ class FinancialHealth
         };
     }
 }
-

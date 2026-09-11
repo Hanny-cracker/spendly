@@ -39,7 +39,7 @@ class Index extends Component
             ->orderByRaw("case when status = 'active' then 0 when status = 'paused' then 1 else 2 end")
             ->orderBy('next_run')->get();
 
-        return view('livewire.recurring.index', ['schedules' => $schedules, 'summary' => [
+        return view('livewire.recurring.index', ['schedules' => $schedules, 'displayTimezone' => auth()->user()->timezone(), 'summary' => [
             'active' => $schedules->where('status', RecurringStatus::Active)->count(),
             'upcoming' => $schedules->where('status', RecurringStatus::Active)->filter(fn (RecurringTransaction $schedule): bool => $schedule->next_run->gte(today()))->count(),
             'expenses' => $schedules->where('type', TransactionType::Expense)->count(),

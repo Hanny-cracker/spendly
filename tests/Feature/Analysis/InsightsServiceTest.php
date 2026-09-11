@@ -1,8 +1,8 @@
 <?php
 
-use App\Services\Analysis\InsightsService;
 use App\Data\Report\DateRangeData;
 use App\Models\User;
+use App\Services\Analysis\InsightsService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

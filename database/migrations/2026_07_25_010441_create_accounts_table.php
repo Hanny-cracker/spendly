@@ -19,7 +19,7 @@ return new class extends Migration
                 'bank',
                 'mobile_money',
                 'credit_card',
-                'savings'
+                'savings',
             ]);
             $table->string('currency')->default('FCFA');
             $table->decimal('opening_balance', 12, 2)->default(0);
@@ -29,7 +29,6 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
 
     public function down(): void
     {

@@ -2,11 +2,22 @@
 
 namespace App\Http\Requests\Reports;
 
+use App\Data\Report\DateRangeData;
+use Carbon\Carbon;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReportDateRangeRequest extends FormRequest
 {
+    public function dateRange(): DateRangeData
+    {
+        return new DateRangeData(
+            userId: (int) $this->user()->id,
+            startDate: Carbon::parse($this->validated('start_date'))->startOfDay(),
+            endDate: Carbon::parse($this->validated('end_date'))->endOfDay(),
+        );
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */

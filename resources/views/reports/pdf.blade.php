@@ -52,6 +52,16 @@
 </section>
 
 <section class="section">
+    <h2 class="section-title">Cash Flow</h2>
+    <table><tbody>
+        <tr><td>Completed income</td><td class="number">{{ number_format($cashFlow['total_income'] ?? 0, 0) }} FCFA</td></tr>
+        <tr><td>Completed expenses</td><td class="number">{{ number_format($cashFlow['total_expenses'] ?? 0, 0) }} FCFA</td></tr>
+        <tr><td>Net cash flow</td><td class="number"><strong>{{ number_format($cashFlow['net_cash_flow'] ?? 0, 0) }} FCFA</strong></td></tr>
+        <tr><td>Cash flow status</td><td class="number">{{ ucfirst($cashFlow['status'] ?? 'neutral') }}</td></tr>
+    </tbody></table>
+</section>
+
+<section class="section">
     <h2 class="section-title">Transaction Summary</h2>
     <table><tbody>
         @foreach (['Total Transactions' => $summary['total_transactions'] ?? 0, 'Income Transactions' => $summary['income_transactions'] ?? 0, 'Expense Transactions' => $summary['expense_transactions'] ?? 0, 'Largest Income' => number_format($summary['largest_income'] ?? 0, 0).' FCFA', 'Largest Expense' => number_format($summary['largest_expense'] ?? 0, 0).' FCFA'] as $label => $value)

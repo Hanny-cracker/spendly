@@ -88,9 +88,9 @@ it('generates an expense report grouped by category', function () {
 
     $transportReport = collect($report)->first(
         fn ($item) => $item->categoryId === $transport->id
-        
+
     );
-// dd($transportReport);
+    // dd($transportReport);
     expect($transportReport->categoryName)
         ->toBe('Transport')
         ->and($transportReport->total)

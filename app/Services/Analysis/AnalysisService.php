@@ -2,12 +2,12 @@
 
 namespace App\Services\Analysis;
 
-use App\Actions\Analysis\CategoryAnalysis;
-use App\Actions\Analysis\CashFlowAnalysis;
-use App\Actions\Analysis\IncomeAnalysis;
 use App\Actions\Analysis\AnalyzeSpending;
-use App\Data\Analysis\CategoryAnalysisData;
+use App\Actions\Analysis\CashFlowAnalysis;
+use App\Actions\Analysis\CategoryAnalysis;
+use App\Actions\Analysis\IncomeAnalysis;
 use App\Data\Analysis\CashFlowAnalysisData;
+use App\Data\Analysis\CategoryAnalysisData;
 use App\Data\Analysis\IncomeAnalysisData;
 use App\Data\Analysis\SpendingAnalysisData;
 use App\Data\Report\DateRangeData;

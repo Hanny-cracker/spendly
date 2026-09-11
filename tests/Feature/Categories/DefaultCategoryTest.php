@@ -1,14 +1,12 @@
 <?php
 
-it('creates default categories during onboarding', function(){
+it('creates default categories during onboarding', function () {
 
-    $user=$this->createUser();
-
+    $user = $this->createUser();
 
     expect(
         $user->categories()->count()
     )
-    ->toBeGreaterThan(0);
-
+        ->toBeGreaterThan(0);
 
 });

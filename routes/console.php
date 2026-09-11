@@ -11,4 +11,9 @@ Artisan::command('inspire', function () {
 Schedule::command(
     'transactions:generate-recurring'
 )
-->daily();
+    ->everyMinute()
+    ->withoutOverlapping();
+
+Schedule::command('transactions:notify-upcoming')
+    ->everyMinute()
+    ->withoutOverlapping();

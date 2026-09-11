@@ -8,53 +8,40 @@ use App\Models\Account;
 use App\Models\User;
 use Carbon\Carbon;
 
-
-
-test('creating an expense decreases account balance', function(){
-
-
+test('creating an expense decreases account balance', function () {
 
     // Arrange
 
     $user = User::factory()->create();
 
-
     $account = Account::factory()
         ->for($user)
         ->create([
-            'current_balance'=>1000
+            'current_balance' => 1000,
         ]);
 
-
-
     $data = new CreateTransactionData(
-        userId:$user->id,
-        accountId:$account->id,
-        categoryId:null,
-        transferId:null,
-        recurringTransactionId:null,
-        title:'Food',
-        description:null,
-        amount:500,
-        type:TransactionType::Expense,
-        date:Carbon::today(),
-        status:TransactionStatus::Completed
+        userId: $user->id,
+        accountId: $account->id,
+        categoryId: null,
+        transferId: null,
+        recurringTransactionId: null,
+        title: 'Food',
+        description: null,
+        amount: 500,
+        type: TransactionType::Expense,
+        date: Carbon::today(),
+        status: TransactionStatus::Completed
     );
-
-
 
     // Act
 
     app(CreateTransaction::class)
         ->handle($data);
 
-
-
     // Refresh database data
 
     $account->refresh();
-
-
 
     // Assert
 
@@ -62,62 +49,47 @@ test('creating an expense decreases account balance', function(){
         $account->current_balance
     )->toBe(500.0);
 
-
-
 });
 
-test('creating an expense increes account balance', function(){
-
-
+test('creating an expense increes account balance', function () {
 
     // Arrange
 
     $user = User::factory()->create();
 
-
     $account = Account::factory()
         ->for($user)
         ->create([
-            'current_balance'=>1000
+            'current_balance' => 1000,
         ]);
 
-
-
     $data = new CreateTransactionData(
-        userId:$user->id,
-        accountId:$account->id,
-        categoryId:null,
-        transferId:null,
-        recurringTransactionId:null,
-        title:'Food',
-        description:null,
-        amount:500,
-        type:TransactionType::Income,
-        date:Carbon::today(),
-        status:TransactionStatus::Completed
+        userId: $user->id,
+        accountId: $account->id,
+        categoryId: null,
+        transferId: null,
+        recurringTransactionId: null,
+        title: 'Food',
+        description: null,
+        amount: 500,
+        type: TransactionType::Income,
+        date: Carbon::today(),
+        status: TransactionStatus::Completed
     );
-
-
 
     // Act
 
     app(CreateTransaction::class)
         ->handle($data);
 
-
-
     // Refresh database data
 
     $account->refresh();
-
-
 
     // Assert
 
     expect(
         $account->current_balance
     )->toBe(1500.0);
-
-
 
 });

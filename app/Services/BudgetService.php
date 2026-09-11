@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\BudgetStatus;
+use App\Enums\TransactionType;
 use App\Models\Budget;
 use App\Models\Transaction;
-use App\Enums\TransactionType;
-use App\Enums\BudgetStatus;
 
 class BudgetService
 {
@@ -69,20 +69,20 @@ class BudgetService
     /**
      * Budget status.
      */
-public function status(Budget $budget): BudgetStatus
-{
-    $percentage = $this->percentageUsed($budget);
+    public function status(Budget $budget): BudgetStatus
+    {
+        $percentage = $this->percentageUsed($budget);
 
-    if ($percentage >= 100) {
-        return BudgetStatus::Exceeded;
+        if ($percentage >= 100) {
+            return BudgetStatus::Exceeded;
+        }
+
+        if ($percentage >= $budget->alert_percentage) {
+            return BudgetStatus::Warning;
+        }
+
+        return BudgetStatus::Safe;
     }
-
-    if ($percentage >= $budget->alert_percentage) {
-        return BudgetStatus::Warning;
-    }
-
-    return BudgetStatus::Safe;
-}
 
     /**
      * Complete budget summary.

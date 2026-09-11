@@ -16,7 +16,7 @@ it('requires authentication and defaults to the current month', function () {
 it('applies a valid custom range and rejects an invalid range', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
-    Livewire::test(Index::class)->set('period', 'custom')->set('startDate', '2026-08-01')->set('endDate', '2026-08-31')->call('applyCustom')->assertHasNoErrors()->assertSet('reportData.start_date', '2026-08-01')->assertSet('reportData.end_date', '2026-08-31');
+    Livewire::test(Index::class)->set('period', 'custom')->set('startDate', '2026-08-01')->set('endDate', '2026-08-31')->call('applyCustom')->assertHasNoErrors()->assertSet('reportData.start_date', '2026-08-01')->assertSet('reportData.end_date', '2026-08-31')->assertSee('start_date=2026-08-01', false)->assertSee('end_date=2026-08-31', false);
     Livewire::test(Index::class)->set('period', 'custom')->set('startDate', '2026-09-30')->set('endDate', '2026-09-01')->call('applyCustom')->assertHasErrors(['startDate', 'endDate']);
 });
 

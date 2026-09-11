@@ -19,10 +19,9 @@ trait HasEnumHelpers
     public static function values(): array
     {
         return collect(self::cases())
-            ->map(fn(BackedEnum $case) => $case->value)
+            ->map(fn (BackedEnum $case) => $case->value)
             ->toArray();
     }
-
 
     /**
      * Get all enum names.
@@ -30,10 +29,9 @@ trait HasEnumHelpers
     public static function names(): array
     {
         return collect(self::cases())
-            ->map(fn($case) => $case->name)
+            ->map(fn ($case) => $case->name)
             ->toArray();
     }
-
 
     /**
      * Get enum options for forms.
@@ -48,12 +46,11 @@ trait HasEnumHelpers
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn($case) => [
+            ->mapWithKeys(fn ($case) => [
                 $case->value => $case->label(),
             ])
             ->toArray();
     }
-
 
     /**
      * Get enum labels.
@@ -61,10 +58,9 @@ trait HasEnumHelpers
     public static function labels(): array
     {
         return collect(self::cases())
-            ->map(fn($case) => $case->label())
+            ->map(fn ($case) => $case->label())
             ->toArray();
     }
-
 
     /**
      * Get enum color map.
@@ -72,12 +68,11 @@ trait HasEnumHelpers
     public static function colors(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn($case) => [
+            ->mapWithKeys(fn ($case) => [
                 $case->value => $case->color(),
             ])
             ->toArray();
     }
-
 
     /**
      * Get enum icon map.
@@ -85,12 +80,11 @@ trait HasEnumHelpers
     public static function icons(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn($case) => [
+            ->mapWithKeys(fn ($case) => [
                 $case->value => $case->icon(),
             ])
             ->toArray();
     }
-
 
     /**
      * Check if enum contains value.
@@ -100,7 +94,6 @@ trait HasEnumHelpers
         return self::tryFrom($value) !== null;
     }
 
-
     /**
      * Return random enum case.
      */
@@ -108,7 +101,6 @@ trait HasEnumHelpers
     {
         return collect(self::cases())->random();
     }
-
 
     /**
      * Return cases as collection.
@@ -121,23 +113,27 @@ trait HasEnumHelpers
     public static function only(array $cases): Collection
     {
         return collect(self::cases())
-            ->filter(fn($case) => in_array($case, $cases, true))
+            ->filter(fn ($case) => in_array($case, $cases, true))
             ->values();
     }
+
     public static function except(array $cases): Collection
     {
         return collect(self::cases())
-            ->reject(fn($case) => in_array($case, $cases, true))
+            ->reject(fn ($case) => in_array($case, $cases, true))
             ->values();
     }
+
     public static function last(): static
     {
         return self::cases()[array_key_last(self::cases())];
     }
+
     public static function first(): static
     {
         return self::cases()[0];
     }
+
     public static function count(): int
     {
         return count(self::cases());

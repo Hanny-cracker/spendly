@@ -3,8 +3,8 @@
 use App\Actions\Analysis\BudgetProgressAnalysis;
 use App\Data\Report\DateRangeData;
 use App\Services\Analysis\BudgetAnalysisService;
-// use Mockery;
 
+// use Mockery;
 
 it('generates budget progress through the analysis service', function () {
     $data = new DateRangeData(

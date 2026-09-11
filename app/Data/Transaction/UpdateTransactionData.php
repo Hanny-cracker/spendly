@@ -6,10 +6,8 @@ use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use Carbon\Carbon;
 
-
 final readonly class UpdateTransactionData
 {
-
     public function __construct(
         public ?int $accountId,
         public ?int $categoryId,
@@ -23,6 +21,6 @@ final readonly class UpdateTransactionData
         public TransactionStatus $status,
         public ?string $receiptPath = null,
         public ?string $notes = null,
-    ){}
+    ) {}
 
 }

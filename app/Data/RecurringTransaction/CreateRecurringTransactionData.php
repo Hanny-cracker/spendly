@@ -46,7 +46,7 @@ readonly class CreateRecurringTransactionData
             'type' => $this->type,
 
             'frequency' => $this->frequency,
-            'interval'=>$this->interval,
+            'interval' => $this->interval,
             'start_date' => $this->startDate,
             'next_run' => $this->nextRun,
             'end_date' => $this->endDate,

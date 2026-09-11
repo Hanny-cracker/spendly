@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Reports\ReportCsvController;
 use App\Http\Controllers\Reports\ReportPdfController;
+use App\Http\Controllers\Reports\ReportPrintController;
 use App\Livewire\Accounts\Create as AccountsCreate;
 use App\Livewire\Accounts\Edit as AccountsEdit;
 use App\Livewire\Accounts\Index as AccountsIndex;
 use App\Livewire\Accounts\Show as AccountsShow;
+use App\Livewire\Actions\Logout;
 use App\Livewire\Analytics\Index as AnalyticsIndex;
 use App\Livewire\Budgets\Create as BudgetsCreate;
 use App\Livewire\Budgets\Edit as BudgetsEdit;
@@ -23,18 +25,27 @@ use App\Livewire\Recurring\Edit as RecurringEdit;
 use App\Livewire\Recurring\Index as RecurringIndex;
 use App\Livewire\Recurring\Show as RecurringShow;
 use App\Livewire\Reports\Index as ReportsIndex;
+use App\Livewire\Settings\Index as SettingsIndex;
 use App\Livewire\Transactions\Create as TransactionsCreate;
 use App\Livewire\Transactions\Edit as TransactionsEdit;
 use App\Livewire\Transactions\Index as TransactionsIndex;
 use App\Livewire\Transactions\Show as TransactionsShow;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+// Route::view('/', 'welcome');
+// Route::view('/', 'onboarding')->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
 
+    return view('onboarding');
+})->name('home');
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
@@ -91,7 +102,16 @@ Route::get('recurring/{recurringTransaction}', RecurringShow::class)->middleware
 
 Route::get('reports/pdf', ReportPdfController::class)->middleware('auth')->name('reports.pdf');
 Route::get('reports/csv', ReportCsvController::class)->middleware('auth')->name('reports.csv');
+Route::get('reports/print', ReportPrintController::class)->middleware('auth')->name('reports.print');
 Route::get('reports', ReportsIndex::class)->middleware('auth')->name('reports');
+
+Route::get('settings', SettingsIndex::class)->middleware('auth')->name('settings');
+
+Route::post('logout', function (Logout $logout) {
+    $logout();
+
+    return redirect('/');
+})->middleware('auth')->name('logout');
 
 Route::get('transactions', TransactionsIndex::class)
     ->middleware('auth')

@@ -3,9 +3,7 @@
     <div class="mb-4 flex items-center gap-3">
         <h2 class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Goal Savings</h2>
         <div class="flex-1 border-t border-dashed border-stone-300"></div>
-        @if (Route::has('goals'))
-            <a href="{{ route('goals') }}" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800">View goals</a>
-        @endif
+        <a href="{{ route('goals') }}" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800">View goals</a>
     </div>
 
     <div class="rounded-2xl border border-stone-200 bg-[#fbf8f2] p-4 sm:p-5">

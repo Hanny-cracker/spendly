@@ -8,73 +8,45 @@ use App\Enums\RecurringStatus;
 use App\Models\RecurringTransaction;
 use App\Services\RecurringTransactions\RecurringTransactionNotificationService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class NotifyUpcomingRecurringTransactions extends Command
 {
     protected $signature = 'transactions:notify-upcoming';
 
-    protected $description =
-        'Notify users about upcoming recurring transactions';
+    protected $description = 'Notify users about upcoming recurring transactions';
 
-    public function handle(
-        RecurringTransactionNotificationService $notificationService
-    ): int {
-
-        $now = now();
-
-        $recurringTransactions = RecurringTransaction::query()
+    public function handle(RecurringTransactionNotificationService $notificationService): int
+    {
+        $scheduleIds = RecurringTransaction::query()
             ->where('status', RecurringStatus::Active)
-            ->whereNotNull('next_run')
-            ->get();
+            ->whereBetween('next_run', [now(), now()->addHours(24)])
+            ->pluck('id');
 
-        foreach ($recurringTransactions as $recurring) {
+        foreach ($scheduleIds as $scheduleId) {
+            DB::transaction(function () use ($scheduleId, $notificationService): void {
+                $recurring = RecurringTransaction::query()->lockForUpdate()->find($scheduleId);
+                if (! $recurring || ! $recurring->status->isActive()) {
+                    return;
+                }
 
-            $nextRun = $recurring->next_run;
+                $minutesUntilRun = now()->diffInMinutes($recurring->next_run, false);
+                if ($minutesUntilRun <= 0 || $minutesUntilRun > 1440) {
+                    return;
+                }
 
-            $hoursUntilPayment = $now->diffInHours(
-                $nextRun,
-                false
-            );
+                if ($minutesUntilRun <= 360 && $recurring->last_6h_notified_at === null) {
+                    $recurring->update(['last_6h_notified_at' => now()]);
+                    DB::afterCommit(fn () => $notificationService->upcoming6Hours($recurring->fresh()));
 
-            /*
-            |--------------------------------------------------------------------------
-            | 24-hour notification
-            |--------------------------------------------------------------------------
-            */
+                    return;
+                }
 
-            if (
-                $hoursUntilPayment <= 24
-                && $hoursUntilPayment > 12
-                && $recurring->last_24h_notified_at === null
-            ) {
-                $notificationService->upcoming24Hours(
-                    $recurring
-                );
-
-                $recurring->update([
-                    'last_24h_notified_at' => $now,
-                ]);
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | 6-hour notification
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                $hoursUntilPayment <= 6
-                && $hoursUntilPayment > 0
-                && $recurring->last_6h_notified_at === null
-            ) {
-                $notificationService->upcoming6Hours(
-                    $recurring
-                );
-
-                $recurring->update([
-                    'last_6h_notified_at' => $now,
-                ]);
-            }
+                if ($minutesUntilRun > 360 && $recurring->last_24h_notified_at === null && $recurring->last_6h_notified_at === null) {
+                    $recurring->update(['last_24h_notified_at' => now()]);
+                    DB::afterCommit(fn () => $notificationService->upcoming24Hours($recurring->fresh()));
+                }
+            });
         }
 
         return self::SUCCESS;

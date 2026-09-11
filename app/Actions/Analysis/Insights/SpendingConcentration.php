@@ -7,7 +7,7 @@ use App\Data\Analysis\CategoryAnalysisData;
 class SpendingConcentration
 {
     /**
-     * @param array<int, CategoryAnalysisData> $categories
+     * @param  array<int, CategoryAnalysisData>  $categories
      */
     public function handle(array $categories): array
     {
@@ -78,14 +78,10 @@ class SpendingConcentration
         return [
             'total' => (float) $total,
             'top_category' => $topCategory,
-            'top_category_percentage' =>
-                (float) $topCategoryPercentage,
-            'top_two_percentage' =>
-                (float) $topTwoPercentage,
-            'top_three_percentage' =>
-                (float) $topThreePercentage,
-            'concentration_level' =>
-                $concentrationLevel,
+            'top_category_percentage' => (float) $topCategoryPercentage,
+            'top_two_percentage' => (float) $topTwoPercentage,
+            'top_three_percentage' => (float) $topThreePercentage,
+            'concentration_level' => $concentrationLevel,
         ];
     }
 }

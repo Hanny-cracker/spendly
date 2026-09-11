@@ -1,20 +1,21 @@
 <?php
 
+use App\Console\Commands\NotifyUpcomingRecurringTransactions;
 use App\Enums\RecurringFrequency;
 use App\Enums\RecurringStatus;
+use App\Enums\RecurringTransactionNotificationType;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\RecurringTransaction;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Notifications\RecurringTransactionNotification;
+use App\Services\RecurringTransactions\RecurringTransactionNotificationService;
 use App\Services\RecurringTransactions\RecurringTransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use App\Console\Commands\NotifyUpcomingRecurringTransactions;
-use App\Services\RecurringTransactions\RecurringTransactionNotificationService;
-use App\Enums\RecurringTransactionNotificationType;
 
 uses(RefreshDatabase::class);
 
@@ -51,7 +52,7 @@ it('sends a notification after a recurring transaction is generated', function (
 
     expect($transaction)
         ->toBeInstanceOf(
-            \App\Models\Transaction::class
+            Transaction::class
         );
 
     expect($transaction->status)
@@ -93,7 +94,6 @@ it('sends a 24 hour notification', function () {
         }
     );
 });
-
 
 it('sends a 6 hour notification', function () {
 

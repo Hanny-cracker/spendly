@@ -1,18 +1,12 @@
 <?php
 
-
 use App\Models\User;
-
-
 
 it('creates default accounts during onboarding', function () {
 
-
     $user = User::factory()->create();
 
-
-    foreach(config('spendly.default_accounts') as $account){
-
+    foreach (config('spendly.default_accounts') as $account) {
 
         expect(
 
@@ -24,26 +18,20 @@ it('creates default accounts during onboarding', function () {
                 ->exists()
 
         )
-        ->toBeTrue();
-
+            ->toBeTrue();
 
     }
-
 
 });
 
 it('marks default accounts correctly', function () {
 
-
     $user = $this->createUser();
-
 
     $account = $user->accounts()
         ->first();
 
-
     expect($account->is_default)
         ->toBeTrue();
-
 
 });

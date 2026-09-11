@@ -2,9 +2,9 @@
 
 namespace Tests\Helpers;
 
-use App\Models\User;
-use App\Models\Account;
 use App\Enums\AccountType;
+use App\Models\Account;
+use App\Models\User;
 
 trait CreatesAccounts
 {

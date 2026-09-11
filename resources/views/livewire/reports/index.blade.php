@@ -14,12 +14,12 @@
                     <option value="this_year">This Year</option>
                     <option value="custom">Custom</option>
                 </select></label>
-            <div class="grid grid-cols-3 gap-2"><button type="button" onclick="window.print()"
-                    class="rounded-xl border border-stone-300 bg-[#fbf8f2] px-3 py-2.5 text-sm font-semibold transition hover:bg-stone-100">Print</button><a
+            <div class="grid grid-cols-1 gap-2 min-[360px]:grid-cols-3"><a target="_blank" rel="noopener" href="{{ route('reports.print', ['start_date' => $startDate, 'end_date' => $endDate]) }}"
+                    class="rounded-xl border border-stone-300 bg-[#fbf8f2] px-3 py-2.5 text-center text-sm font-semibold transition hover:bg-stone-100">Print</a><a
                     href="{{ route('reports.csv', ['start_date' => $startDate, 'end_date' => $endDate]) }}"
-                    class="rounded-xl border border-stone-300 bg-[#fbf8f2] px-3 py-2.5 text-center text-sm font-semibold transition hover:bg-stone-100">CSV</a><a
+                    class="rounded-xl border border-stone-300 bg-[#fbf8f2] px-3 py-2.5 text-center text-sm font-semibold transition hover:bg-stone-100">Export CSV</a><a
                     href="{{ route('reports.pdf', ['start_date' => $startDate, 'end_date' => $endDate]) }}"
-                    class="rounded-xl bg-emerald-700 px-3 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-emerald-800">PDF</a>
+                    class="rounded-xl bg-emerald-700 px-3 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-emerald-800">Export PDF</a>
             </div>
         </div>
     </section>

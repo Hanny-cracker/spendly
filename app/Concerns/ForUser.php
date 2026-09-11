@@ -13,7 +13,7 @@ trait ForUser
      */
     public function forUser(User $user): static
     {
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'user_id' => $user->id,
         ]);
     }

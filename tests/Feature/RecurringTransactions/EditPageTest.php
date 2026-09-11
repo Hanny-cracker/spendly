@@ -18,8 +18,9 @@ it('edits future configuration without changing history or balances', function (
     $balanceA = $accountA->refresh()->current_balance;
     $this->actingAs($user);
 
-    Livewire::test(Edit::class, ['recurringTransaction' => $schedule->refresh()])->set('amount', '30000')->set('accountId', (string) $accountB->id)->call('save')->assertHasNoErrors()->assertRedirect(route('recurring.show', $schedule));
-    expect($oldTransaction->refresh()->amount)->toBe(25000.0)->and($oldTransaction->account_id)->toBe($accountA->id)->and($accountA->refresh()->current_balance)->toBe($balanceA)->and($accountB->refresh()->current_balance)->toBe(200000.0);
+    Livewire::test(Edit::class, ['recurringTransaction' => $schedule->refresh()])->set('amount', '30000')->set('accountId', (string) $accountB->id)->set('scheduledTime', '18:30')->call('save')->assertHasNoErrors()->assertRedirect(route('recurring.show', $schedule));
+    expect($oldTransaction->refresh()->amount)->toBe(25000.0)->and($oldTransaction->account_id)->toBe($accountA->id)->and($accountA->refresh()->current_balance)->toBe($balanceA)->and($accountB->refresh()->current_balance)->toBe(200000.0)->and($schedule->refresh()->next_run->format('H:i'))->toBe('18:30');
+    $schedule->update(['next_run' => now()]);
     $newTransaction = app(RecurringTransactionService::class)->generate($schedule->refresh());
     expect($newTransaction->amount)->toBe(30000.0)->and($newTransaction->account_id)->toBe($accountB->id);
 });

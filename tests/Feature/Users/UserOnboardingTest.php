@@ -1,21 +1,17 @@
 <?php
 
+use App\Actions\Users\CreateDefaultUserData;
 use App\Models\User;
-
 
 test('new user receives default accounts and categories', function () {
 
-
     // Arrange
     $user = User::factory()->create();
-
 
     // Assert accounts
     expect(
         $user->accounts()->count()
     )->toBeGreaterThan(0);
-
-
 
     // Assert categories
 
@@ -23,7 +19,6 @@ test('new user receives default accounts and categories', function () {
         $user->categories()->count()
     )->toBeGreaterThan(0);
 });
-
 
 it('creates the configured default accounts', function () {
 
@@ -38,7 +33,6 @@ it('creates the configured default accounts', function () {
         )->toBeTrue();
     }
 });
-
 
 it('creates the configured default categories', function () {
 
@@ -62,7 +56,7 @@ it('does not create duplicate onboarding data', function () {
 
     $user = User::factory()->create();
 
-    app(\App\Actions\Users\CreateDefaultUserData::class)
+    app(CreateDefaultUserData::class)
         ->handle($user);
 
     expect(

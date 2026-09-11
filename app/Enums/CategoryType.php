@@ -7,12 +7,10 @@ namespace App\Enums;
 use App\Concerns\HasEnumHelpers;
 use App\Concerns\HasEnumMetadata;
 
-
 enum CategoryType: string
 {
     use HasEnumHelpers;
     use HasEnumMetadata;
-
 
     case Income = 'income';
 
@@ -28,7 +26,6 @@ enum CategoryType: string
         return $this === self::Expense;
     }
 
-
     protected function metadata(): array
     {
         return match ($this) {
@@ -39,7 +36,6 @@ enum CategoryType: string
                 'icon' => 'heroicon-o-arrow-trending-up',
                 'description' => 'Money coming into your accounts.',
             ],
-
 
             self::Expense => [
                 'label' => 'Expense',

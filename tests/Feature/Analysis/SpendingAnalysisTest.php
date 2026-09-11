@@ -41,7 +41,6 @@ function createExpense(
     ], $attributes));
 }
 
-
 it('calculates total spending', function () {
 
     $user = User::factory()->create();
@@ -65,7 +64,6 @@ it('calculates total spending', function () {
         ->toBe(60000.0);
 });
 
-
 it('calculates transaction count', function () {
 
     $user = User::factory()->create();
@@ -88,7 +86,6 @@ it('calculates transaction count', function () {
         ->toBe(2);
 });
 
-
 it('calculates average transaction amount', function () {
 
     $user = User::factory()->create();
@@ -110,7 +107,6 @@ it('calculates average transaction amount', function () {
     expect($analysis->averageTransaction)
         ->toBe(20000.0);
 });
-
 
 it('identifies the top spending category', function () {
 
@@ -143,7 +139,6 @@ it('identifies the top spending category', function () {
         ->toBe(50000.0);
 });
 
-
 it('calculates top category percentage', function () {
 
     $user = User::factory()->create();
@@ -173,7 +168,6 @@ it('calculates top category percentage', function () {
         ->toBe(50.0);
 });
 
-
 it('identifies the lowest spending category', function () {
 
     $user = User::factory()->create();
@@ -202,7 +196,6 @@ it('identifies the lowest spending category', function () {
     expect($analysis->lowestCategory)
         ->toBe('Transport');
 });
-
 
 it('excludes pending transactions', function () {
 
@@ -241,7 +234,6 @@ it('excludes pending transactions', function () {
         ->toBe(10000.0);
 });
 
-
 it('filters transactions outside the date range', function () {
 
     $user = User::factory()->create();
@@ -276,7 +268,6 @@ it('filters transactions outside the date range', function () {
     expect($analysis->totalSpent)
         ->toBe(10000.0);
 });
-
 
 it('detects increasing spending trend', function () {
 
@@ -319,7 +310,6 @@ it('detects increasing spending trend', function () {
         ->toBe('increasing');
 });
 
-
 it('detects decreasing spending trend', function () {
 
     $user = User::factory()->create();
@@ -361,7 +351,6 @@ it('detects decreasing spending trend', function () {
         ->toBe('decreasing');
 });
 
-
 it('detects stable spending trend', function () {
 
     $user = User::factory()->create();
@@ -402,7 +391,6 @@ it('detects stable spending trend', function () {
     expect($analysis->trend)
         ->toBe('stable');
 });
-
 
 it('handles a period with no spending', function () {
 

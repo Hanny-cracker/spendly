@@ -2,10 +2,10 @@
 
 namespace App\Services\Analysis;
 
-use App\Actions\Analysis\CategoryAnalysis;
-use App\Actions\Analysis\CashFlowAnalysis;
-use App\Actions\Analysis\IncomeAnalysis;
 use App\Actions\Analysis\AnalyzeSpending;
+use App\Actions\Analysis\CashFlowAnalysis;
+use App\Actions\Analysis\CategoryAnalysis;
+use App\Actions\Analysis\IncomeAnalysis;
 use App\Actions\Analysis\Insights\FinancialHealth;
 use App\Actions\Analysis\Insights\SavingsRate;
 use App\Actions\Analysis\Insights\SpendingConcentration;

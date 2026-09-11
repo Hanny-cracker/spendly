@@ -179,7 +179,6 @@
 
 
             {{-- Analytics --}}
-            @if (Route::has('analytics'))
 
                 <a
                     href="{{ route('analytics') }}"
@@ -203,11 +202,9 @@
                     Analytics
                 </a>
 
-            @endif
 
 
             {{-- Transactions --}}
-            @if (Route::has('transactions'))
 
                 <a
                     href="{{ route('transactions') }}"
@@ -231,11 +228,9 @@
                     Transactions
                 </a>
 
-            @endif
 
 
             {{-- Accounts --}}
-            @if (Route::has('accounts'))
 
                 <a
                     href="{{ route('accounts') }}"
@@ -259,11 +254,9 @@
                     Accounts
                 </a>
 
-            @endif
 
 
             {{-- Budgets --}}
-            @if (Route::has('budgets'))
 
                 <a
                     href="{{ route('budgets') }}"
@@ -287,11 +280,9 @@
                     Budgets
                 </a>
 
-            @endif
 
 
             {{-- Categories --}}
-            @if (Route::has('categories'))
 
                 <a
                     href="{{ route('categories') }}"
@@ -315,11 +306,9 @@
                     Categories
                 </a>
 
-            @endif
 
 
             {{-- Goals --}}
-            @if (Route::has('goals'))
 
                 <a
                     href="{{ route('goals') }}"
@@ -343,11 +332,9 @@
                     Goals
                 </a>
 
-            @endif
 
 
             {{-- Recurring --}}
-            @if (Route::has('recurring'))
 
                 <a
                     href="{{ route('recurring') }}"
@@ -371,11 +358,9 @@
                     Recurring
                 </a>
 
-            @endif
 
 
             {{-- Reports --}}
-            @if (Route::has('reports'))
 
                 <a
                     href="{{ route('reports') }}"
@@ -399,7 +384,6 @@
                     Reports
                 </a>
 
-            @endif
 
         </div>
 
@@ -425,7 +409,6 @@
         </p>
 
 
-        @if (Route::has('settings'))
 
             <a
                 href="{{ route('settings') }}"
@@ -451,7 +434,6 @@
 
             </a>
 
-        @endif
 
     </nav>
 
@@ -468,73 +450,7 @@
             "
         >
 
-            <div
-                class="
-                    flex items-center
-                    gap-3
-
-                    rounded-2xl
-
-                    border border-stone-200
-
-                    bg-white/60
-
-                    p-3
-                "
-            >
-
-                <div
-                    class="
-                        flex h-10 w-10
-                        shrink-0
-                        items-center
-                        justify-center
-
-                        rounded-full
-
-                        bg-emerald-700
-
-                        text-sm
-                        font-bold
-                        text-white
-                    "
-                >
-                    {{ strtoupper(
-                        substr(
-                            auth()->user()->name ?? 'U',
-                            0,
-                            1
-                        )
-                    ) }}
-                </div>
-
-
-                <div class="min-w-0 flex-1">
-
-                    <p
-                        class="
-                            truncate
-                            text-sm
-                            font-semibold
-                            text-stone-800
-                        "
-                    >
-                        {{ auth()->user()->name }}
-                    </p>
-
-                    <p
-                        class="
-                            truncate
-                            text-xs
-                            text-stone-500
-                        "
-                    >
-                        {{ auth()->user()->email }}
-                    </p>
-
-                </div>
-
-            </div>
+            <x-account-menu variant="sidebar" />
 
         </div>
 

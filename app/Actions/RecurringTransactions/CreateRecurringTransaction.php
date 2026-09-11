@@ -7,15 +7,17 @@ use App\Enums\RecurringStatus;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\RecurringTransaction;
-use Carbon\Carbon;
-use Illuminate\Validation\ValidationException;
+use App\Services\RecurringTransactions\RecurringScheduleTime;
 use App\Services\RecurringTransactions\RecurringTransactionService;
+use Illuminate\Validation\ValidationException;
 
 class CreateRecurringTransaction
 {
     public function __construct(
         protected RecurringTransactionService $recurringTransactionService,
+        protected RecurringScheduleTime $scheduleTime,
     ) {}
+
     public function handle(
         CreateRecurringTransactionData $data
     ): RecurringTransaction {
@@ -24,6 +26,12 @@ class CreateRecurringTransaction
 
             throw ValidationException::withMessages([
                 'amount' => 'Amount must be greater than zero.',
+            ]);
+        }
+
+        if (! preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $data->scheduledTime)) {
+            throw ValidationException::withMessages([
+                'scheduledTime' => 'The scheduled time must use the 24-hour HH:MM format.',
             ]);
         }
 
@@ -64,7 +72,8 @@ class CreateRecurringTransaction
             }
         }
 
-        $startAt = Carbon::instance($data->startDate)->startOfDay()->setTimeFromTimeString($data->scheduledTime);
+        $timezone = $this->scheduleTime->timezoneForUser($data->userId);
+        $startAt = $this->scheduleTime->localToUtc($data->startDate, $data->scheduledTime, $timezone);
 
         $recurring = RecurringTransaction::create([
 
@@ -79,6 +88,7 @@ class CreateRecurringTransaction
             'interval' => $data->interval,
             'start_date' => $data->startDate,
             'scheduled_time' => $data->scheduledTime,
+            'timezone' => $timezone,
             'end_date' => $data->endDate,
             'next_run' => $startAt,
             'status' => RecurringStatus::Active,

@@ -3,8 +3,8 @@
 namespace App\Actions\Transfers;
 
 use App\Actions\Transactions\CreateTransaction;
-use App\Data\Transfer\CreateTransferData;
 use App\Data\Transaction\CreateTransactionData;
+use App\Data\Transfer\CreateTransferData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Transfer;
@@ -38,7 +38,7 @@ class CreateTransfer
 
             ]);
 
-//  Debit Source Account
+            //  Debit Source Account
 
             $this->createTransaction->handle(
                 new CreateTransactionData(
@@ -47,7 +47,7 @@ class CreateTransfer
                     categoryId: null,
                     transferId: $transfer->id,
                     recurringTransactionId: null,
-                    title: 'Transfer to ' . $transfer->toAccount->name,
+                    title: 'Transfer to '.$transfer->toAccount->name,
                     description: $data->description,
                     amount: $data->amount,
                     type: TransactionType::Expense,
@@ -57,8 +57,7 @@ class CreateTransfer
 
             );
 
-    //   Credit Destination Account
-
+            //   Credit Destination Account
 
             $this->createTransaction->handle(
 
@@ -68,7 +67,7 @@ class CreateTransfer
                     categoryId: null,
                     transferId: $transfer->id,
                     recurringTransactionId: null,
-                    title: 'Transfer from ' . $transfer->fromAccount->name,
+                    title: 'Transfer from '.$transfer->fromAccount->name,
                     description: $data->description,
                     amount: $data->amount,
                     type: TransactionType::Income,

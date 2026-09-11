@@ -12,7 +12,6 @@ enum TransactionType: string
     use HasEnumHelpers;
     use HasEnumMetadata;
 
-
     case Income = 'income';
 
     case Expense = 'expense';
@@ -53,7 +52,6 @@ enum TransactionType: string
                 'icon' => 'heroicon-o-arrow-trending-up',
                 'description' => 'Money received into an account.',
             ],
-
 
             self::Expense => [
                 'label' => 'Expense',

@@ -8,7 +8,6 @@ trait HasEnumMetadata
 {
     abstract protected function metadata(): array;
 
-
     /**
      * Display label.
      */
@@ -16,7 +15,6 @@ trait HasEnumMetadata
     {
         return $this->metadata()['label'];
     }
-
 
     /**
      * Display color.
@@ -26,7 +24,6 @@ trait HasEnumMetadata
         return $this->metadata()['color'] ?? 'gray';
     }
 
-
     /**
      * Icon name.
      */
@@ -35,7 +32,6 @@ trait HasEnumMetadata
         return $this->metadata()['icon'] ?? null;
     }
 
-
     /**
      * Description text.
      */
@@ -43,7 +39,6 @@ trait HasEnumMetadata
     {
         return $this->metadata()['description'] ?? null;
     }
-
 
     /**
      * Extra badge text.

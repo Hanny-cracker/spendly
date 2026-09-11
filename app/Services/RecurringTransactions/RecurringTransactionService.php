@@ -19,6 +19,7 @@ class RecurringTransactionService
     public function __construct(
         protected CreateTransaction $createTransaction,
         protected RecurringTransactionNotificationService $notificationService,
+        protected RecurringScheduleTime $scheduleTime,
     ) {}
 
     public function generate(RecurringTransaction $recurringTransaction): Transaction
@@ -30,7 +31,7 @@ class RecurringTransactionService
                 throw new RecurringOccurrenceNotDueException('The recurring occurrence is not due.');
             }
 
-            $scheduledFor = Carbon::parse($schedule->next_run);
+            $scheduledFor = Carbon::parse($schedule->next_run->toDateTimeString(), 'UTC');
             $transaction = $this->createTransaction->handle(new CreateTransactionData(
                 userId: $schedule->user_id,
                 accountId: $schedule->account_id,
@@ -40,18 +41,20 @@ class RecurringTransactionService
                 description: $schedule->description,
                 amount: (float) $schedule->amount,
                 type: $schedule->type,
-                date: $scheduledFor->copy(),
+                date: $this->scheduleTime->toLocal($scheduledFor, $schedule->timezone),
                 status: TransactionStatus::Completed,
             ));
             $transaction->update(['scheduled_for' => $scheduledFor]);
 
-            $nextRun = $schedule->frequency->nextRun($scheduledFor);
-            $completed = $schedule->end_date !== null && $nextRun->startOfDay()->gt($schedule->end_date);
+            $nextRun = $this->scheduleTime->nextRunUtc($scheduledFor, $schedule->frequency, $schedule->timezone);
+            $completed = $schedule->end_date !== null
+                && $this->scheduleTime->toLocal($nextRun, $schedule->timezone)->startOfDay()->gt($schedule->end_date);
             $schedule->update([
                 'next_run' => $nextRun,
                 'last_generated_at' => now(),
                 'last_24h_notified_at' => null,
                 'last_6h_notified_at' => null,
+                'last_failure_notified_for' => null,
                 'status' => $completed ? RecurringStatus::Completed : RecurringStatus::Active,
             ]);
 

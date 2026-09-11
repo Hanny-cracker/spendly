@@ -2,17 +2,17 @@
 
 namespace App\Enums;
 
-enum BudgetPeriod:string
+enum BudgetPeriod: string
 {
-    case Daily='daily';
+    case Daily = 'daily';
 
-    case Weekly='weekly';
+    case Weekly = 'weekly';
 
-    case Monthly='monthly';
+    case Monthly = 'monthly';
 
-    case Quarterly='quarterly';
+    case Quarterly = 'quarterly';
 
-    case Yearly='yearly';
+    case Yearly = 'yearly';
 
-    case Custom='custom';
+    case Custom = 'custom';
 }

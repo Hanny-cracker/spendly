@@ -1,6 +1,7 @@
 <?php
 
 use App\Data\Report\DateRangeData;
+use App\Enums\CategoryType;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Account;
@@ -23,7 +24,7 @@ it('generates a complete report summary', function () {
     $food = Category::factory()->create([
         'user_id' => $user->id,
         'name' => 'Food',
-        'type' => \App\Enums\CategoryType::Expense,
+        'type' => CategoryType::Expense,
     ]);
 
     Transaction::factory()->create([

@@ -3,7 +3,6 @@
 namespace App\Actions\Budgets;
 
 use App\Data\Budget\CreateBudgetData;
-use App\Enums\CategoryType;
 use App\Models\Budget;
 use App\Models\Category;
 use App\Services\Budgets\BudgetOverlapChecker;
@@ -29,8 +28,9 @@ class CreateBudget
         }
 
         return DB::transaction(function () use ($data): Budget {
+            /** @var Category|null $category */
             $category = Category::query()->whereKey($data->categoryId)->where('user_id', $data->userId)->lockForUpdate()->first();
-            if (! $category || $category->type !== CategoryType::Expense) {
+            if (! $category || ! $category->type->isExpense()) {
                 throw ValidationException::withMessages(['category' => 'Invalid category.']);
             }
 

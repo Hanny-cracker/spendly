@@ -43,11 +43,13 @@ class Create extends Component
     {
         Gate::authorize('create', RecurringTransaction::class);
         $this->startDate = now()->toDateString();
+        $this->accountId = (string) (Account::query()->where('user_id', auth()->id())->orderByDesc('is_default')->value('id') ?? '');
+        $this->categoryId = $this->preferredCategoryId();
     }
 
     public function updatedType(): void
     {
-        $this->categoryId = '';
+        $this->categoryId = $this->preferredCategoryId();
     }
 
     public function save(CreateRecurringTransaction $action): mixed
@@ -94,5 +96,12 @@ class Create extends Component
             'scheduledTime' => ['required', 'date_format:H:i'],
             'endDate' => ['nullable', 'date', 'after_or_equal:startDate'],
         ];
+    }
+
+    private function preferredCategoryId(): string
+    {
+        $column = $this->type === TransactionType::Income->value ? 'default_income_category_id' : 'default_expense_category_id';
+
+        return (string) (auth()->user()?->preference()->value($column) ?? '');
     }
 }

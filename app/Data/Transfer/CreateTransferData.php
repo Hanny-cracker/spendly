@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Data\Transfer;
 
 use Carbon\Carbon;

@@ -5,11 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Concerns\HasPublicIdentifier;
+use App\Enums\RecurringNotificationPreference;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -61,38 +63,61 @@ class User extends Authenticatable
             : $initials;
     }
 
+    /** @return HasMany<Account, $this> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
+    /** @return HasMany<Category, $this> */
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class);
     }
 
+    /** @return HasMany<Transaction, $this> */
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
 
+    /** @return HasMany<Budget, $this> */
     public function budgets(): HasMany
     {
         return $this->hasMany(Budget::class);
     }
 
+    /** @return HasMany<RecurringTransaction, $this> */
     public function recurringTransactions(): HasMany
     {
         return $this->hasMany(RecurringTransaction::class);
     }
 
+    /** @return HasMany<Goal, $this> */
     public function goals(): HasMany
     {
         return $this->hasMany(Goal::class);
     }
 
+    /** @return HasMany<GoalContribution, $this> */
     public function goalContributions(): HasMany
     {
         return $this->hasMany(GoalContribution::class);
+    }
+
+    /** @return HasOne<UserPreference, $this> */
+    public function preference(): HasOne
+    {
+        return $this->hasOne(UserPreference::class);
+    }
+
+    public function wantsRecurringNotification(RecurringNotificationPreference $preference): bool
+    {
+        return (bool) ($this->preference()->value($preference->value) ?? true);
+    }
+
+    public function timezone(): string
+    {
+        return (string) ($this->preference()->value('timezone') ?? config('app.timezone', 'UTC'));
     }
 }

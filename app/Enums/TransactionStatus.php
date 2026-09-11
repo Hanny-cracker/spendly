@@ -12,11 +12,9 @@ enum TransactionStatus: string
     use HasEnumHelpers;
     use HasEnumMetadata;
 
-
     case Pending = 'pending';
 
     case Completed = 'completed';
-
 
     public function isPending(): bool
     {
@@ -33,7 +31,6 @@ enum TransactionStatus: string
         return $this->isCompleted();
     }
 
-
     protected function metadata(): array
     {
         return match ($this) {
@@ -44,7 +41,6 @@ enum TransactionStatus: string
                 'icon' => 'heroicon-o-clock',
                 'description' => 'Transaction has not been completed yet.',
             ],
-
 
             self::Completed => [
                 'label' => 'Completed',

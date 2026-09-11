@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->unsignedTinyInteger('alert_percentage')->default(80);
             $table->boolean('is_active')->default(true);
-            $table->unique(['user_id','category_id','start_date','end_date']);
+            $table->unique(['user_id', 'category_id', 'start_date', 'end_date']);
             $table->timestamps();
         });
     }

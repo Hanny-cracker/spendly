@@ -22,9 +22,9 @@ it('creates an owned expense schedule without financial side effects', function 
     $startDate = now()->addDay()->toDateString();
     $this->actingAs($user);
 
-    Livewire::test(Create::class)->set('type', 'expense')->set('title', 'Internet Subscription')->set('amount', '25000')->set('accountId', (string) $account->id)->set('categoryId', (string) $category->id)->set('frequency', 'monthly')->set('startDate', $startDate)->call('save')->assertHasNoErrors()->assertRedirect(route('recurring'));
+    Livewire::test(Create::class)->set('type', 'expense')->set('title', 'Internet Subscription')->set('amount', '25000')->set('accountId', (string) $account->id)->set('categoryId', (string) $category->id)->set('frequency', 'monthly')->set('startDate', $startDate)->set('scheduledTime', '14:30')->call('save')->assertHasNoErrors()->assertRedirect(route('recurring'));
     $schedule = RecurringTransaction::query()->where('title', 'Internet Subscription')->firstOrFail();
-    expect($schedule->user_id)->toBe($user->id)->and($schedule->next_run->toDateString())->toBe($startDate)->and($schedule->status)->toBe(RecurringStatus::Active)->and($account->refresh()->current_balance)->toBe(500000.0)->and(Transaction::query()->where('user_id', $user->id)->count())->toBe(0);
+    expect($schedule->user_id)->toBe($user->id)->and($schedule->next_run->toDateString())->toBe($startDate)->and($schedule->next_run->format('H:i'))->toBe('14:30')->and(substr($schedule->scheduled_time, 0, 5))->toBe('14:30')->and($schedule->status)->toBe(RecurringStatus::Active)->and($account->refresh()->current_balance)->toBe(500000.0)->and(Transaction::query()->where('user_id', $user->id)->count())->toBe(0);
 });
 
 it('creates an income schedule', function () {
@@ -51,4 +51,12 @@ it('rejects a category that does not match the transaction type', function () {
     $incomeCategory = Category::factory()->for($user)->create(['type' => CategoryType::Income]);
     $this->actingAs($user);
     Livewire::test(Create::class)->set('type', 'expense')->set('title', 'Invalid category')->set('amount', '1000')->set('accountId', (string) $account->id)->set('categoryId', (string) $incomeCategory->id)->set('startDate', now()->addDay()->toDateString())->call('save')->assertHasErrors(['categoryId']);
+});
+
+it('requires a valid scheduled time', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    Livewire::test(Create::class)->set('scheduledTime', '')->call('save')->assertHasErrors(['scheduledTime']);
+    $this->get(route('recurring.create'))->assertSee('type="time"', false);
 });

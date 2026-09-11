@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/** @property-read Category|null $category */
 #[Fillable(['public_id', 'user_id', 'account_id', 'category_id', 'transfer_id', 'recurring_transaction_id', 'scheduled_for', 'title', 'description', 'amount', 'type', 'date', 'status', 'receipt_path', 'notes'])]
 class Transaction extends Model
 {
@@ -58,6 +59,7 @@ class Transaction extends Model
             Transfer::class
         );
     }
+
     public function recurringTransaction(): BelongsTo
     {
         return $this->belongsTo(
@@ -90,21 +92,21 @@ class Transaction extends Model
 
     public function getDisplayTitleAttribute(): string
     {
-        if (!$this->transfer) {
+        if (! $this->transfer) {
             return $this->title;
         }
 
         if ($this->type->isExpense()) {
 
-            return 'Transfer to ' .
+            return 'Transfer to '.
                 $this->transfer
-                ->toAccount
-                ->name;
+                    ->toAccount
+                    ->name;
         }
 
-        return 'Transfer from ' .
+        return 'Transfer from '.
             $this->transfer
-            ->fromAccount
-            ->name;
+                ->fromAccount
+                ->name;
     }
 }

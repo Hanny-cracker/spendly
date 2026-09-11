@@ -3,7 +3,9 @@
 namespace App\Actions\Transfers;
 
 use App\Actions\Transactions\DeleteTransaction;
+use App\Models\Transaction;
 use App\Models\Transfer;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class DeleteTransfer
@@ -18,7 +20,10 @@ class DeleteTransfer
 
         DB::transaction(function () use ($transfer) {
 
-            foreach ($transfer->transactions as $transaction) {
+            /** @var Collection<int, Transaction> $transactions */
+            $transactions = $transfer->transactions;
+
+            foreach ($transactions as $transaction) {
 
                 $this->deleteTransaction
                     ->handle($transaction, allowTransfer: true);

@@ -7,6 +7,7 @@ use App\Data\Report\DateRangeData;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
+use Carbon\CarbonInterface;
 
 class CashFlowAnalysis
 {
@@ -146,8 +147,8 @@ class CashFlowAnalysis
 
     private function calculatePeriodCashFlow(
         int $userId,
-        $startDate,
-        $endDate
+        CarbonInterface $startDate,
+        CarbonInterface $endDate,
     ): float {
         $transactions = Transaction::query()
             ->where('user_id', $userId)

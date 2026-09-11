@@ -13,6 +13,8 @@ class SpendingQueries
     /**
      * Get completed expense transactions
      * for a date range.
+     *
+     * @return Collection<int, Transaction>
      */
     public function expenses(
         DateRangeData $data
@@ -24,6 +26,7 @@ class SpendingQueries
             ->where('user_id', $data->userId)
             ->where('type', TransactionType::Expense)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $data->endDate,
@@ -34,6 +37,8 @@ class SpendingQueries
 
     /**
      * Get expenses grouped by category.
+     *
+     * @return Collection<int, Transaction>
      */
     public function expensesByCategory(
         DateRangeData $data

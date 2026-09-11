@@ -2,17 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Concerns\BelongsToUser;
-use App\Enums\TransactionType;
+use App\Concerns\HasPublicIdentifier;
 use App\Enums\RecurringFrequency;
 use App\Enums\RecurringStatus;
-use \App\Concerns\HasPublicIdentifier;
+use App\Enums\TransactionType;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read TransactionType $type
+ * @property-read RecurringFrequency $frequency
+ * @property-read RecurringStatus $status
+ * @property-read Carbon $start_date
+ * @property-read Carbon|null $end_date
+ * @property-read Carbon $next_run
+ */
 #[Fillable([
     'public_id',
     'user_id',
@@ -26,12 +35,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'interval',
     'start_date',
     'scheduled_time',
+    'timezone',
     'next_run',
     'end_date',
     'status',
     'last_generated_at',
     'last_24h_notified_at',
     'last_6h_notified_at',
+    'last_failure_notified_for',
 ])]
 class RecurringTransaction extends Model
 {
@@ -40,6 +51,11 @@ class RecurringTransaction extends Model
     use HasPublicIdentifier;
 
     protected const PUBLIC_ID_PREFIX = 'rec';
+
+    protected $attributes = [
+        'timezone' => 'UTC',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -53,27 +69,24 @@ class RecurringTransaction extends Model
             'status' => RecurringStatus::class,
             'last_24h_notified_at' => 'datetime',
             'last_6h_notified_at' => 'datetime',
+            'last_failure_notified_for' => 'datetime',
         ];
     }
-
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-
     public function account()
     {
         return $this->belongsTo(Account::class);
     }
 
-
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
-
 
     public function transactions(): HasMany
     {
@@ -89,7 +102,7 @@ class RecurringTransaction extends Model
     {
         return $this->status === RecurringStatus::Active
             && $this->next_run->lte(now())
-            && (! $this->end_date || $this->next_run->startOfDay()->lte($this->end_date));
+            && (! $this->end_date || $this->next_run->copy()->setTimezone($this->timezone)->startOfDay()->lte($this->end_date));
     }
 
     // public function isPaused(): bool

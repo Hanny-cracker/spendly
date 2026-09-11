@@ -1,5 +1,6 @@
 <?php
-// This are shared by every user so we create this so we dont hardcode or let the user create them bythemselves 
+
+// This are shared by every user so we create this so we dont hardcode or let the user create them bythemselves
 return [
 
     'default_categories' => [
@@ -26,7 +27,6 @@ return [
             // 'Other Expense',
         ],
 
-
     ],
     'default_accounts' => [
         [
@@ -37,11 +37,11 @@ return [
             'name' => 'Bank',
             'type' => 'bank',
         ],
-                [
+        [
             'name' => 'MoMo',
             'type' => 'mobile_money',
         ],
 
-    ]
+    ],
 
 ];

@@ -44,11 +44,14 @@ class Create extends Component
         if (in_array($requestedType, [TransactionType::Income, TransactionType::Expense], true)) {
             $this->type = $requestedType->value;
         }
+
+        $this->accountId = $this->initialAccountId();
+        $this->categoryId = $this->preferredCategoryId();
     }
 
     public function updatedType(): void
     {
-        $this->categoryId = '';
+        $this->categoryId = $this->preferredCategoryId();
     }
 
     public function save(CreateTransaction $action): mixed
@@ -116,5 +119,24 @@ class Create extends Component
             'categories' => Category::query()->where('user_id', $userId)->when($categoryType, fn ($query) => $query->where('type', $categoryType), fn ($query) => $query->whereRaw('1 = 0'))->orderBy('name')->get(),
             'submitLabel' => 'Save Transaction',
         ];
+    }
+
+    private function initialAccountId(): string
+    {
+        $requested = (string) request()->query('account', '');
+        $account = Account::query()->where('user_id', auth()->id())
+            ->when($requested !== '', fn ($query) => $query->where(fn ($query) => $query->where('public_id', $requested)->orWhere('id', ctype_digit($requested) ? (int) $requested : 0)))
+            ->when($requested === '', fn ($query) => $query->where('is_default', true))
+            ->first();
+
+        return (string) ($account?->id ?? Account::query()->where('user_id', auth()->id())->orderByDesc('is_default')->value('id') ?? '');
+    }
+
+    private function preferredCategoryId(): string
+    {
+        $column = $this->type === TransactionType::Income->value ? 'default_income_category_id' : 'default_expense_category_id';
+        $categoryId = auth()->user()?->preference()->value($column);
+
+        return (string) ($categoryId ?? '');
     }
 }

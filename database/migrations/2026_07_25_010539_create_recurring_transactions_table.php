@@ -20,14 +20,14 @@ return new class extends Migration
             $table->decimal('amount', 12, 2);
             $table->enum('type', [
                 'income',
-                'expense'
+                'expense',
             ]);
             $table->enum('frequency', [
                 'daily',
                 'weekly',
                 'monthly',
                 'quarterly',
-                'yearly'
+                'yearly',
             ]);
             $table->integer('interval')->default(1);
             $table->timestamp('start_date');
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->enum('status', [
                 'active',
                 'paused',
-                'completed'
+                'completed',
             ])->default('active');
             $table->timestamp('last_generated_at')->nullable();
             $table->timestamps();
@@ -45,7 +45,6 @@ return new class extends Migration
             $table->timestamp('last_6h_notified_at')->nullable();
         });
     }
-
 
     public function down(): void
     {

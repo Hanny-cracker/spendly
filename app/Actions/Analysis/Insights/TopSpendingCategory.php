@@ -7,7 +7,7 @@ use App\Data\Analysis\CategoryAnalysisData;
 class TopSpendingCategory
 {
     /**
-     * @param array<int, CategoryAnalysisData> $categories
+     * @param  array<int, CategoryAnalysisData>  $categories
      */
     public function handle(array $categories): ?CategoryAnalysisData
     {

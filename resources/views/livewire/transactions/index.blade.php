@@ -53,8 +53,8 @@
                             <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
                         </button>
                         <div x-cloak x-show="open" x-transition.origin.top.right class="absolute right-0 top-full z-50 mt-1 w-36 rounded-xl border border-stone-200 bg-[#fbf8f2] p-1.5 shadow-lg">
-                            @if (Route::has('transactions.show'))<a href="{{ route('transactions.show', $transaction) }}" @click="open = false" class="block rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">View</a>@endif
-                            @if (Route::has('transactions.edit') && ! $isTransfer)<a href="{{ route('transactions.edit', $transaction) }}" @click="open = false" class="block rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">Edit</a>@endif
+                            <a href="{{ route('transactions.show', $transaction) }}" @click="open = false" class="block rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">View</a>
+                            @if (! $isTransfer)<a href="{{ route('transactions.edit', $transaction) }}" @click="open = false" class="block rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">Edit</a>@endif
                         </div>
                     </div>
                     <time class="hidden whitespace-nowrap text-xs text-stone-500 sm:col-start-3 sm:row-start-1 sm:block">{{ $transaction->date->format('d M Y') }}</time>

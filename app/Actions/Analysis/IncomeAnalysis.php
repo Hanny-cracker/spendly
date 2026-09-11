@@ -18,6 +18,7 @@ class IncomeAnalysis
             ->where('user_id', $data->userId)
             ->where('type', TransactionType::Income)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $data->endDate,
@@ -125,6 +126,7 @@ class IncomeAnalysis
             ->where('user_id', $data->userId)
             ->where('type', TransactionType::Income)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $data->startDate,
                 $midpoint,
@@ -135,6 +137,7 @@ class IncomeAnalysis
             ->where('user_id', $data->userId)
             ->where('type', TransactionType::Income)
             ->where('status', TransactionStatus::Completed)
+            ->whereNull('transfer_id')
             ->whereBetween('date', [
                 $midpoint->copy()->addDay(),
                 $data->endDate,

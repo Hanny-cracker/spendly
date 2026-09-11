@@ -9,6 +9,7 @@ class SavingsRate
 {
     public function __construct(private SavingsAnalysis $savingsAnalysis) {}
 
+    /** @return array<string, mixed> */
     public function handle(DateRangeData $data): array
     {
         return $this->savingsAnalysis->handle($data)->toArray();
