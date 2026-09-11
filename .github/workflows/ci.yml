@@ -13,5 +13,15 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v7
 
-      - name: Confirm pipeline is running
-        run: echo "Spendly CI pipeline started successfully"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_mysql, bcmath, intl
+          coverage: none
+
+      - name: Check PHP version
+        run: php -v
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
