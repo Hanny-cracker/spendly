@@ -9,6 +9,7 @@ use App\Data\Category\CreateCategoryData;
 use App\Enums\AccountType;
 use App\Enums\CategoryType;
 use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class CreateDefaultUserData
@@ -33,6 +34,15 @@ class CreateDefaultUserData
 
     private function createAccounts(User $user): void
     {
+        $colors = Arr::shuffle([
+            '#047857',
+            '#2563EB',
+            '#D97706',
+            '#7C3AED',
+            '#0891B2',
+            '#E11D48',
+            '#57534E',
+        ]);
 
         foreach (config('spendly.default_accounts') as $index => $account) {
 
@@ -45,6 +55,7 @@ class CreateDefaultUserData
                     ),
                     currency: $user->currency ?? 'FCFA',
                     openingBalance: 0,
+                    color: $colors[$index % count($colors)],
                     isDefault: $index === 0,
                 )
 

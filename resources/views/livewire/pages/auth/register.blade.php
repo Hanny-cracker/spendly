@@ -37,7 +37,13 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <form wire:submit.prevent="register">
+    <div class="mb-8">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Get started</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-stone-900">Create your Spendly account</h1>
+        <p class="mt-2 text-sm text-stone-500">A clearer, calmer way to manage your money.</p>
+    </div>
+
+    <form wire:submit.prevent="register" class="space-y-5">
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -46,14 +52,14 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <!-- Email Address -->
-        <div class="mt-4">
+        <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
+        <div>
             <x-input-label for="password" :value="__('Password')" />
 
             <x-text-input wire:model="password" id="password" class="block mt-1 w-full"
@@ -65,7 +71,7 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
+        <div>
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
 
             <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
@@ -75,12 +81,12 @@ new #[Layout('layouts.guest')] class extends Component
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex flex-col-reverse items-stretch gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}" wire:navigate>
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <x-primary-button class="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold normal-case tracking-normal text-white hover:bg-emerald-800 focus:bg-emerald-800 focus:ring-emerald-500 sm:ms-4">
                 {{ __('Register') }}
             </x-primary-button>
         </div>

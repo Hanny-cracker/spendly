@@ -29,6 +29,12 @@ class Create extends Component
     {
         Gate::authorize('create', Account::class);
         $this->currency = auth()->user()->currency ?? 'FCFA';
+        $this->color = $this->defaultColorForType($this->type);
+    }
+
+    public function updatedType(string $type): void
+    {
+        $this->color = $this->defaultColorForType($type);
     }
 
     public function save(CreateAccount $action): mixed
@@ -76,6 +82,17 @@ class Create extends Component
 
     private function colors(): array
     {
-        return ['#047857' => 'Emerald', '#2563EB' => 'Blue', '#D97706' => 'Amber', '#7C3AED' => 'Violet', '#E11D48' => 'Rose', '#57534E' => 'Stone'];
+        return ['#047857' => 'Emerald', '#2563EB' => 'Blue', '#D97706' => 'Amber', '#7C3AED' => 'Violet', '#0891B2' => 'Cyan', '#E11D48' => 'Rose', '#57534E' => 'Stone'];
+    }
+
+    private function defaultColorForType(string $type): string
+    {
+        return match ($type) {
+            AccountType::Bank->value => '#2563EB',
+            AccountType::MobileMoney->value => '#D97706',
+            AccountType::CreditCard->value => '#7C3AED',
+            AccountType::Savings->value => '#0891B2',
+            default => '#047857',
+        };
     }
 }
