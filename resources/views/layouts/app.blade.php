@@ -190,8 +190,8 @@
                 sm:mx-3 sm:my-4
                 lg:mx-4 lg:my-5
                 xl:mx-6 xl:my-6
-                p-2
-                sm:p-3
+                p-4
+                sm:p-4
                 lg:p-4
                 xl:p-6
                 

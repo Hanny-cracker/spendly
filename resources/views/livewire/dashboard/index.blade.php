@@ -1,4 +1,4 @@
-<div class="relative min-h-full space-y-8 rounded-xl bg-[#fffdf8] p-1 transition-opacity duration-200 sm:p-2"
+<div class="relative min-h-full space-y-8 rounded-xl bg-[#fffdf8] p-2 transition-opacity duration-200 sm:p-2"
     wire:loading.class="opacity-60"
     wire:target="startDate,endDate">
     <span
