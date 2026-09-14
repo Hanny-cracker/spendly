@@ -50,8 +50,9 @@
                         </div>
                         <p class="mt-7 font-mono text-2xl font-bold tracking-tight {{ $account['current_balance'] < 0 ? 'text-red-700' : 'text-stone-900' }}">{{ number_format($account['current_balance'], 0) }}</p>
                         <p class="mt-1 text-xs font-medium text-stone-500">{{ $account['currency'] }}</p>
-                        <div class="mt-6 border-t border-stone-200 pt-4">
+                        <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-stone-200 pt-4">
                             <a href="{{ route('accounts.show', $account['public_id']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800">View account <span aria-hidden="true">&rarr;</span></a>
+                            <a href="{{ route('transactions.create', ['type' => 'income', 'account' => $account['public_id']]) }}" class="text-sm font-semibold text-stone-600 hover:text-emerald-700">Add funds</a>
                         </div>
                     </article>
                 @endforeach

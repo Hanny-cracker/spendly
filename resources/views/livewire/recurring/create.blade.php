@@ -5,7 +5,7 @@
         <p class="mt-1 text-sm text-stone-500">Create a dated and timed schedule without recording a transaction today.
         </p>
     </div>
-    <form wire:submit.prevent="save" x-data="{ submitted: false }" x-on:submit="if (submitted) { $event.preventDefault(); return; } submitted = true" x-bind:class="{ 'pointer-events-none opacity-60': submitted }" class="space-y-5 rounded-2xl border border-stone-200 bg-[#fbf8f2] p-5 sm:p-6">
+    <form wire:submit.prevent="save" class="space-y-5 rounded-2xl border border-stone-200 bg-[#fbf8f2] p-5 sm:p-6">
         @include('livewire.recurring.partials.schedule-form', ['editing' => false])
         <div class="flex justify-end gap-2 border-t pt-5"><a href="{{ route('recurring') }}"
                 class="rounded-xl border px-4 py-2.5 text-sm font-semibold">Cancel</a><button

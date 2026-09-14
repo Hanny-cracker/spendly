@@ -42,6 +42,22 @@
     }
 }
 
+@media (max-width: 639px) {
+    /* Keep record action menus fully visible when the trigger is near the viewport bottom. */
+    main [x-show][class*="absolute"][class*="right-0"] {
+        top: auto;
+        bottom: 100%;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Detail-page action menus must not extend past the left edge on narrow screens. */
+    main > div > section:first-child [x-show][class*="absolute"][class*="right-0"] {
+        right: auto;
+        left: 0;
+    }
+}
+
 @media print {
     body {
         background: white !important;
