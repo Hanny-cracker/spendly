@@ -22,6 +22,7 @@ class RecurringTransactionNotification extends Notification implements ShouldQue
         public RecurringTransactionNotificationType $type,
         public ?CarbonInterface $scheduledFor = null,
         public ?BudgetAvailabilityData $budgetAvailability = null,
+        public ?float $accountFundsAvailable = null,
     ) {}
 
     public function via(object $notifiable): array
@@ -80,6 +81,8 @@ class RecurringTransactionNotification extends Notification implements ShouldQue
             RecurringTransactionNotificationType::BudgetFailure => "Your recurring expense '{$title}' of {$amount} was not recorded. "
                 ."The {$this->budgetAvailability?->categoryName} budget has only "
                 .number_format((float) $this->budgetAvailability?->remaining, 2).' FCFA remaining.',
+            RecurringTransactionNotificationType::AccountFundsFailure => "Your recurring expense '{$title}' of {$amount} was not recorded. "
+                .'The account has only '.number_format((float) $this->accountFundsAvailable, 2).' FCFA available. Fund the account and resume this schedule.',
         };
     }
 
@@ -92,6 +95,7 @@ class RecurringTransactionNotification extends Notification implements ShouldQue
                 ? 'Recurring deposit recorded'
                 : 'Recurring expense recorded',
             RecurringTransactionNotificationType::BudgetFailure => 'Recurring expense not recorded',
+            RecurringTransactionNotificationType::AccountFundsFailure => 'Recurring expense paused',
         };
     }
 }

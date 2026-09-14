@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Enums\RecurringStatus;
 use App\Exceptions\BudgetExceededException;
+use App\Exceptions\InsufficientAccountBalanceException;
 use App\Exceptions\RecurringOccurrenceNotDueException;
 use App\Models\RecurringTransaction;
 use App\Services\RecurringTransactions\RecurringTransactionNotificationService;
@@ -23,9 +24,10 @@ class GenerateRecurringTransactions extends Command
 
     public function handle(RecurringTransactionService $service, RecurringTransactionNotificationService $notifications): int
     {
+        $now = now('UTC');
         $recurringTransactions = RecurringTransaction::query()
             ->where('status', RecurringStatus::Active)
-            ->where('next_run', '<=', now())
+            ->where('next_run', '<=', $now)
             ->orderBy('next_run')
             ->get();
 
@@ -48,6 +50,14 @@ class GenerateRecurringTransactions extends Command
                 });
                 Log::warning('Recurring occurrence blocked by budget.', ['recurring_transaction_id' => $recurring->id, 'public_id' => $recurring->public_id, 'scheduled_for' => $scheduledFor->toDateTimeString(), 'failure' => 'insufficient_budget']);
                 $this->warn("Skipped {$recurring->title}: {$exception->getMessage()}");
+            } catch (InsufficientAccountBalanceException $exception) {
+                DB::transaction(function () use ($recurring, $scheduledFor, $exception, $notifications): void {
+                    $locked = RecurringTransaction::query()->lockForUpdate()->findOrFail($recurring->id);
+                    $locked->update(['status' => RecurringStatus::Paused, 'last_failure_notified_for' => $scheduledFor]);
+                    DB::afterCommit(fn () => $notifications->accountFundsFailure($locked->fresh(), $scheduledFor, $exception));
+                });
+                Log::warning('Recurring occurrence paused because of insufficient account funds.', ['recurring_transaction_id' => $recurring->id, 'public_id' => $recurring->public_id, 'scheduled_for' => $scheduledFor->toDateTimeString(), 'failure' => 'insufficient_account_funds']);
+                $this->warn("Paused {$recurring->title}: {$exception->getMessage()}");
             } catch (RecurringOccurrenceNotDueException) {
                 Log::notice('Recurring occurrence was already processed or is no longer due.', ['recurring_transaction_id' => $recurring->id, 'public_id' => $recurring->public_id, 'scheduled_for' => $scheduledFor->toDateTimeString()]);
             } catch (Throwable $exception) {

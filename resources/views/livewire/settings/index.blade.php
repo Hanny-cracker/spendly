@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-5xl space-y-6">
+<div class="mx-auto max-w-5xl space-y-6" x-init="$wire.detectTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)">
     <header><p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Your account</p><h1 class="mt-1 text-3xl font-semibold tracking-tight">Settings</h1><p class="mt-1 text-sm text-stone-500">Manage your profile and application preferences.</p></header>
     <div class="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
         <nav class="flex gap-2 overflow-x-auto rounded-2xl border border-stone-200 bg-[#fbf8f2] p-2 lg:block lg:space-y-1" aria-label="Settings sections">

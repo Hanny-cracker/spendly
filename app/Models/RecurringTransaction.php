@@ -101,7 +101,7 @@ class RecurringTransaction extends Model
     public function shouldGenerate(): bool
     {
         return $this->status === RecurringStatus::Active
-            && $this->next_run->lte(now())
+            && $this->next_run->lte(now('UTC'))
             && (! $this->end_date || $this->next_run->copy()->setTimezone($this->timezone)->startOfDay()->lte($this->end_date));
     }
 

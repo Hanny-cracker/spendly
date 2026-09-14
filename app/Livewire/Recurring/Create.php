@@ -58,11 +58,20 @@ class Create extends Component
         $validated = $this->validate($this->rules());
         $startDate = Carbon::parse($validated['startDate']);
         $action->handle(new CreateRecurringTransactionData(
-            userId: (int) auth()->id(), accountId: (int) $validated['accountId'], categoryId: (int) $validated['categoryId'],
-            title: $validated['title'], description: $validated['description'] ?: null, amount: (float) $validated['amount'],
-            type: TransactionType::from($validated['type']), frequency: RecurringFrequency::from($validated['frequency']), interval: 1,
-            startDate: $startDate, nextRun: $startDate, endDate: $validated['endDate'] ? Carbon::parse($validated['endDate']) : null,
-            status: RecurringStatus::Active, scheduledTime: $validated['scheduledTime'],
+            userId: (int) auth()->id(),
+            accountId: (int) $validated['accountId'],
+            categoryId: (int) $validated['categoryId'],
+            title: $validated['title'],
+            description: $validated['description'] ?: null,
+            amount: (float) $validated['amount'],
+            type: TransactionType::from($validated['type']),
+            frequency: RecurringFrequency::from($validated['frequency']),
+            interval: 1,
+            startDate: $startDate,
+            nextRun: $startDate,
+            endDate: $validated['endDate'] ? Carbon::parse($validated['endDate']) : null,
+            status: RecurringStatus::Active,
+            scheduledTime: $validated['scheduledTime'],
         ));
         session()->flash('success', 'Recurring transaction created successfully.');
 
@@ -87,7 +96,8 @@ class Create extends Component
 
         return [
             'type' => ['required', Rule::enum(TransactionType::class)->only([TransactionType::Income, TransactionType::Expense])],
-            'title' => ['required', 'string', 'max:255'], 'description' => ['nullable', 'string', 'max:2000'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
             'amount' => ['required', 'numeric', 'gt:0'],
             'accountId' => ['required', Rule::exists('accounts', 'id')->where('user_id', $userId)],
             'categoryId' => ['required', Rule::exists('categories', 'id')->where(fn ($query) => $query->where('user_id', $userId)->where('type', $this->type))],

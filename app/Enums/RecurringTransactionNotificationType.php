@@ -11,4 +11,6 @@ enum RecurringTransactionNotificationType: string
     case Generated = 'generated';
 
     case BudgetFailure = 'budget_failure';
+
+    case AccountFundsFailure = 'account_funds_failure';
 }

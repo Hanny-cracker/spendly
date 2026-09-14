@@ -69,6 +69,13 @@ it('ignores schedules whose date is today but scheduled time is still in the fut
 
     expect(Transaction::query()->where('recurring_transaction_id', $schedule->id)->count())->toBe(0)
         ->and($schedule->refresh()->next_run->toDateTimeString())->toBe('2026-09-09 18:00:00');
+
+    Carbon::setTestNow('2026-09-09 18:01:00');
+    $this->artisan('transactions:generate-recurring')->assertSuccessful();
+
+    expect(Transaction::query()->where('recurring_transaction_id', $schedule->id)->count())->toBe(1)
+        ->and($schedule->refresh()->next_run->toDateTimeString())->toBe('2026-09-10 18:00:00');
+
     Carbon::setTestNow();
 });
 
@@ -108,6 +115,27 @@ it('sends one budget failure notification and leaves the occurrence due', functi
         ->and($schedule->last_generated_at)->toBeNull();
     Notification::assertSentToTimes($user, RecurringTransactionNotification::class, 1);
     Notification::assertSentTo($user, RecurringTransactionNotification::class, fn ($notification) => $notification->type === RecurringTransactionNotificationType::BudgetFailure);
+    Carbon::setTestNow();
+});
+
+it('pauses an unfunded recurring expense and notifies the owner', function () {
+    Notification::fake();
+    Carbon::setTestNow('2026-09-09 08:03:00');
+    $user = User::factory()->create();
+    $account = Account::factory()->for($user)->create(['current_balance' => 0]);
+    $category = Category::factory()->for($user)->expense()->create();
+    $schedule = executableSchedule($user, Carbon::parse('2026-09-09 08:00:00'), [
+        'account' => $account,
+        'category' => $category,
+        'amount' => 25000,
+    ]);
+
+    $this->artisan('transactions:generate-recurring')->assertSuccessful();
+
+    expect(Transaction::query()->where('recurring_transaction_id', $schedule->id)->count())->toBe(0)
+        ->and($account->refresh()->current_balance)->toBe(0.0)
+        ->and($schedule->refresh()->status)->toBe(RecurringStatus::Paused);
+    Notification::assertSentTo($user, RecurringTransactionNotification::class, fn ($notification) => $notification->type === RecurringTransactionNotificationType::AccountFundsFailure);
     Carbon::setTestNow();
 });
 

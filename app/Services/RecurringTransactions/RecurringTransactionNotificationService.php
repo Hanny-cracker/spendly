@@ -5,6 +5,7 @@ namespace App\Services\RecurringTransactions;
 use App\Data\Budget\BudgetAvailabilityData;
 use App\Enums\RecurringNotificationPreference;
 use App\Enums\RecurringTransactionNotificationType;
+use App\Exceptions\InsufficientAccountBalanceException;
 use App\Models\RecurringTransaction;
 use App\Models\User;
 use App\Notifications\RecurringTransactionNotification;
@@ -50,6 +51,11 @@ class RecurringTransactionNotificationService
             RecurringNotificationPreference::Failure,
             new RecurringTransactionNotification(recurringTransaction: $recurring, type: RecurringTransactionNotificationType::BudgetFailure, scheduledFor: $scheduledFor, budgetAvailability: $availability),
         );
+    }
+
+    public function accountFundsFailure(RecurringTransaction $recurring, CarbonInterface $scheduledFor, InsufficientAccountBalanceException $exception): void
+    {
+        $this->deliver($recurring, RecurringNotificationPreference::Failure, new RecurringTransactionNotification(recurringTransaction: $recurring, type: RecurringTransactionNotificationType::AccountFundsFailure, scheduledFor: $scheduledFor, accountFundsAvailable: $exception->available));
     }
 
     private function deliver(RecurringTransaction $recurring, RecurringNotificationPreference $preference, RecurringTransactionNotification $notification): void

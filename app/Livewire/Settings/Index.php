@@ -120,6 +120,17 @@ class Index extends Component
         session()->flash('preferences_status', 'Preferences saved.');
     }
 
+    public function detectTimezone(string $timezone): void
+    {
+        if (! in_array($timezone, DateTimeZone::listIdentifiers(), true)) {
+            return;
+        }
+
+        if (! $this->authenticatedUser()->preference()->exists()) {
+            $this->timezone = $timezone;
+        }
+    }
+
     public function saveFinancialSettings(UpdateFinancialSettings $action): void
     {
         $user = $this->authenticatedUser();
