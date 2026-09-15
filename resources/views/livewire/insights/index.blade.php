@@ -1,0 +1,15 @@
+<div class="mx-auto max-w-4xl space-y-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div><p class="mb-1 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">AI Financial Insights</p><h1 class="text-2xl font-semibold text-stone-900 sm:text-3xl">Your financial review</h1><p class="mt-1 text-sm text-stone-500">A personalized review based on your Spendly activity.</p></div>
+        <button type="button" wire:click="regenerate" wire:loading.attr="disabled" wire:target="regenerate" class="rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"><span wire:loading.remove wire:target="regenerate">Regenerate analysis</span><span wire:loading wire:target="regenerate">Generating...</span></button>
+    </div>
+    @if ($error)<div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{{ $error }}</div>@endif
+    @if (! $insight)
+        <x-card padding="p-8"><div class="text-center"><h2 class="font-semibold text-stone-900">No review generated yet</h2><p class="mt-1 text-sm text-stone-500">Generate a review after adding some income and expenses.</p></div></x-card>
+    @else
+        @php($data = $insight->data ?? [])
+        <x-card padding="p-5 sm:p-7"><div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Financial health</p><p class="mt-2 font-mono text-4xl font-bold text-emerald-700">{{ $insight->health_score }}<span class="text-lg text-stone-400"> / 100</span></p></div><div class="max-w-xl"><p class="text-lg font-semibold text-stone-900">{{ $insight->summary }}</p><p class="mt-2 text-xs text-stone-500">Last updated {{ $insight->generated_at?->format('d M Y, H:i') }}</p></div></div></x-card>
+        <div class="grid gap-4 md:grid-cols-2"><x-card padding="p-5"><h2 class="text-sm font-semibold text-stone-900">Highlights</h2><ul class="mt-3 space-y-2 text-sm text-stone-600">@forelse(($data['highlights'] ?? []) as $item)<li>• {{ $item }}</li>@empty<li>No highlights available.</li>@endforelse</ul></x-card><x-card padding="p-5"><h2 class="text-sm font-semibold text-stone-900">Warnings</h2><ul class="mt-3 space-y-2 text-sm text-stone-600">@forelse(($data['warnings'] ?? []) as $item)<li>• {{ $item }}</li>@empty<li>No warnings at this time.</li>@endforelse</ul></x-card></div>
+        <x-card padding="p-5"><h2 class="text-sm font-semibold text-stone-900">Recommendations</h2><div class="mt-4 grid gap-3 md:grid-cols-2">@forelse(($data['recommendations'] ?? []) as $recommendation)<article class="rounded-lg border border-stone-200 p-4"><div class="flex items-center justify-between gap-2"><h3 class="text-sm font-semibold text-stone-900">{{ $recommendation['title'] }}</h3><span class="text-[10px] font-semibold uppercase tracking-wider text-emerald-700">{{ $recommendation['priority'] }}</span></div><p class="mt-2 text-sm text-stone-600">{{ $recommendation['description'] }}</p></article>@empty<p class="text-sm text-stone-500">No recommendations available.</p>@endforelse</div></x-card>
+    @endif
+</div>

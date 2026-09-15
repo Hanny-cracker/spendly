@@ -13,6 +13,7 @@ use App\Models\Category;
 use App\Models\RecurringTransaction;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -56,23 +57,35 @@ class Create extends Component
     {
         Gate::authorize('create', RecurringTransaction::class);
         $validated = $this->validate($this->rules());
+        $lock = Cache::lock('recurring-create:'.auth()->id().':'.sha1(serialize($validated)), 30);
+        if (! $lock->get()) {
+            $this->addError('title', 'This recurring transaction is already being created.');
+
+            return null;
+        }
         $startDate = Carbon::parse($validated['startDate']);
-        $action->handle(new CreateRecurringTransactionData(
-            userId: (int) auth()->id(),
-            accountId: (int) $validated['accountId'],
-            categoryId: (int) $validated['categoryId'],
-            title: $validated['title'],
-            description: $validated['description'] ?: null,
-            amount: (float) $validated['amount'],
-            type: TransactionType::from($validated['type']),
-            frequency: RecurringFrequency::from($validated['frequency']),
-            interval: 1,
-            startDate: $startDate,
-            nextRun: $startDate,
-            endDate: $validated['endDate'] ? Carbon::parse($validated['endDate']) : null,
-            status: RecurringStatus::Active,
-            scheduledTime: $validated['scheduledTime'],
-        ));
+        try {
+            $action->handle(new CreateRecurringTransactionData(
+                userId: (int) auth()->id(),
+                accountId: (int) $validated['accountId'],
+                categoryId: (int) $validated['categoryId'],
+                title: $validated['title'],
+                description: $validated['description'] ?: null,
+                amount: (float) $validated['amount'],
+                type: TransactionType::from($validated['type']),
+                frequency: RecurringFrequency::from($validated['frequency']),
+                interval: 1,
+                startDate: $startDate,
+                nextRun: $startDate,
+                endDate: $validated['endDate'] ? Carbon::parse($validated['endDate']) : null,
+                status: RecurringStatus::Active,
+                scheduledTime: $validated['scheduledTime'],
+            ));
+        } catch (\Throwable $exception) {
+            $lock->release();
+
+            throw $exception;
+        }
         session()->flash('success', 'Recurring transaction created successfully.');
 
         return $this->redirectRoute('recurring', navigate: true);

@@ -8,7 +8,7 @@
         class="mt-1 text-xs text-stone-500">Type cannot change after transactions have been generated.</p>@endif
     @error('type')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
 </fieldset>
-<label class="block text-sm font-medium">Name<input wire:model.live="title" placeholder="Internet Subscription"
+<label class="block text-sm font-medium">Name<input wire:model.live="title" required placeholder="Internet Subscription"
         class="mt-1 w-full rounded-xl border-stone-300">@error('title')<p class="text-xs text-red-600">{{ $message }}
     </p>@enderror</label>
 <label class="block text-sm font-medium">Amount<div class="mt-1 flex"><input type="number" min="0.01" step="0.01"
@@ -29,10 +29,10 @@
             wire:model.live="frequency" class="mt-1 w-full rounded-xl border-stone-300">@foreach ($frequencies as $value =>
             $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach</select>@error('frequency')<p
             class="text-xs text-red-600">{{ $message }}</p>@enderror</label><label class="text-sm font-medium">Start
-        date<input type="date" wire:model.live="startDate" @readonly($editing && $hasHistory)
+        date<input type="date" wire:model.live="startDate" required @readonly($editing && $hasHistory)
             class="mt-1 w-full rounded-xl border-stone-300 read-only:bg-stone-100">@error('startDate')<p
             class="text-xs text-red-600">{{ $message }}</p>@enderror</label><label
-        class="text-sm font-medium">Time<input type="time" wire:model.live="scheduledTime"
+        class="text-sm font-medium">Time<input type="time" wire:model.live="scheduledTime" required
             class="mt-1 w-full rounded-xl border-stone-300">@error('scheduledTime')<p class="text-xs text-red-600">{{
             $message }}</p>@enderror</label><label class="text-sm font-medium">End date<input type="date"
             wire:model.live="endDate" class="mt-1 w-full rounded-xl border-stone-300">@error('endDate')<p

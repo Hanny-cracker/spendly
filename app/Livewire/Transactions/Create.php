@@ -13,6 +13,7 @@ use App\Models\Transaction;
 use App\Services\Budgets\BudgetSpendingGuard;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -58,17 +59,30 @@ class Create extends Component
     {
         $validated = $this->validate($this->rules());
 
-        $action->handle(new CreateTransactionData(
-            userId: auth()->id(),
-            accountId: (int) $validated['accountId'],
-            categoryId: (int) $validated['categoryId'],
-            title: $validated['title'],
-            description: $validated['description'] ?: null,
-            amount: (float) $validated['amount'],
-            type: TransactionType::from($validated['type']),
-            status: TransactionStatus::from($validated['status']),
-            date: Carbon::parse($validated['date']),
-        ));
+        $lock = Cache::lock('transaction-create:'.auth()->id().':'.sha1(serialize($validated)), 30);
+        if (! $lock->get()) {
+            $this->addError('title', 'This transaction is already being created.');
+
+            return null;
+        }
+
+        try {
+            $action->handle(new CreateTransactionData(
+                userId: auth()->id(),
+                accountId: (int) $validated['accountId'],
+                categoryId: (int) $validated['categoryId'],
+                title: $validated['title'],
+                description: $validated['description'] ?: null,
+                amount: (float) $validated['amount'],
+                type: TransactionType::from($validated['type']),
+                status: TransactionStatus::from($validated['status']),
+                date: Carbon::parse($validated['date']),
+            ));
+        } catch (\Throwable $exception) {
+            $lock->release();
+
+            throw $exception;
+        }
 
         session()->flash('success', 'Transaction created successfully.');
 

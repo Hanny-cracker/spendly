@@ -20,6 +20,8 @@ use App\Livewire\Goals\Create as GoalsCreate;
 use App\Livewire\Goals\Edit as GoalsEdit;
 use App\Livewire\Goals\Index as GoalsIndex;
 use App\Livewire\Goals\Show as GoalsShow;
+use App\Livewire\Insights\Index as InsightsIndex;
+use App\Livewire\Receipts\Scan as ReceiptsScan;
 use App\Livewire\Recurring\Create as RecurringCreate;
 use App\Livewire\Recurring\Edit as RecurringEdit;
 use App\Livewire\Recurring\Index as RecurringIndex;
@@ -30,6 +32,7 @@ use App\Livewire\Transactions\Create as TransactionsCreate;
 use App\Livewire\Transactions\Edit as TransactionsEdit;
 use App\Livewire\Transactions\Index as TransactionsIndex;
 use App\Livewire\Transactions\Show as TransactionsShow;
+use App\Livewire\Transfers\Create as TransfersCreate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -106,6 +109,8 @@ Route::get('reports/print', ReportPrintController::class)->middleware('auth')->n
 Route::get('reports', ReportsIndex::class)->middleware('auth')->name('reports');
 
 Route::get('settings', SettingsIndex::class)->middleware('auth')->name('settings');
+Route::get('insights', InsightsIndex::class)->middleware('auth')->name('insights');
+Route::get('receipts/scan', ReceiptsScan::class)->middleware('auth')->name('receipts.scan');
 
 Route::post('logout', function (Logout $logout) {
     $logout();
@@ -128,4 +133,8 @@ Route::get('transactions/{transaction}/edit', TransactionsEdit::class)
 Route::get('transactions/{transaction}', TransactionsShow::class)
     ->middleware('auth')
     ->name('transactions.show');
+
+Route::get('transfers/create', TransfersCreate::class)
+    ->middleware('auth')
+    ->name('transfers.create');
 require __DIR__.'/auth.php';

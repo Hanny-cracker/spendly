@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard;
 
 use App\Data\Report\DateRangeData;
+use App\Services\AI\AIInsightService;
 use App\Services\Dashboard\DashboardService;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -64,9 +65,10 @@ class Index extends Component
         $this->loadDashboard($dashboardService);
     }
 
-    public function render()
+    public function render(AIInsightService $insightService)
     {
-        // dd($this->dashboardData);
-        return view('livewire.dashboard.index');
+        return view('livewire.dashboard.index', [
+            'aiInsight' => $insightService->latest(auth()->user()),
+        ]);
     }
 }

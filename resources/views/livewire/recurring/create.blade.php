@@ -11,7 +11,7 @@
                 class="rounded-xl border px-4 py-2.5 text-sm font-semibold">Cancel</a><button
                 class="rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                 wire:loading.attr="disabled" wire:target="save"
-                @disabled(blank($title) || blank($amount) || blank($accountId) || blank($categoryId) || blank($frequency) || blank($startDate) || blank($scheduledTime))><span wire:loading.remove wire:target="save">Create Recurring</span><span
+                ><span wire:loading.remove wire:target="save">Create Recurring</span><span
                     wire:loading wire:target="save">Creating...</span></button></div>
     </form>
 </div>

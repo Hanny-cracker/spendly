@@ -6,10 +6,13 @@
             <p class="mt-1 text-sm text-stone-500">Manage your cash, bank, mobile money and other accounts.</p>
         </div>
 
-        <a href="{{ route('accounts.create') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 md:w-auto">
+        <div class="flex w-full flex-col gap-2 sm:flex-row md:w-auto">
+            <a href="{{ route('transfers.create') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-stone-300 px-4 py-2.5 text-sm font-semibold text-stone-700 hover:bg-stone-100 md:w-auto">Transfer funds</a>
+            <a href="{{ route('accounts.create') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 md:w-auto">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M12 5v14M5 12h14" /></svg>
                 Add Account
-        </a>
+            </a>
+        </div>
     </section>
 
     <section class="grid grid-cols-1 gap-3 sm:grid-cols-2">

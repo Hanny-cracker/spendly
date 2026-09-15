@@ -133,6 +133,17 @@
 
     @include('livewire.dashboard.partials.goal-savings')
 
+    <section>
+        <div class="mb-4 flex items-center gap-3"><h2 class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">AI Financial Review</h2><div class="flex-1 border-t border-dashed border-stone-300"></div></div>
+        <x-card padding="p-4 sm:p-5">
+            @if ($aiInsight)
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p class="font-mono text-2xl font-bold text-emerald-700">{{ $aiInsight->health_score }}<span class="text-sm text-stone-400"> / 100</span></p><p class="mt-1 line-clamp-2 text-sm text-stone-600">{{ $aiInsight->summary }}</p></div><a href="{{ route('insights') }}" class="text-sm font-semibold text-emerald-700 hover:text-emerald-800">View insights</a></div>
+            @else
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><p class="text-sm text-stone-600">Get a personalized review of your spending and savings.</p><a href="{{ route('insights') }}" class="inline-flex w-fit rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800">Generate AI review</a></div>
+            @endif
+        </x-card>
+    </section>
+
 
     {{-- Accounts --}}
     @include('livewire.dashboard.partials.accounts')
