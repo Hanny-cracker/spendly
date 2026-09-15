@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\AIProvider;
+use App\Services\AI\GeminiProvider;
 use App\Services\AI\OpenAIProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -18,7 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(AIProvider::class, OpenAIProvider::class);
+        $this->app->bind(AIProvider::class, fn () => config('ai.provider') === 'gemini'
+            ? app(GeminiProvider::class)
+            : app(OpenAIProvider::class));
     }
 
     /**
