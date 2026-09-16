@@ -3,24 +3,32 @@
 namespace App\Actions\RecurringTransactions;
 
 use App\Data\RecurringTransaction\CreateRecurringTransactionData;
+use App\Enums\Feature;
 use App\Enums\RecurringStatus;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\RecurringTransaction;
+use App\Models\User;
+use App\Services\Entitlements\EntitlementService;
 use App\Services\RecurringTransactions\RecurringScheduleTime;
-use App\Services\RecurringTransactions\RecurringTransactionService;
 use Illuminate\Validation\ValidationException;
 
 class CreateRecurringTransaction
 {
     public function __construct(
-        protected RecurringTransactionService $recurringTransactionService,
         protected RecurringScheduleTime $scheduleTime,
+        protected EntitlementService $entitlements,
     ) {}
 
     public function handle(
         CreateRecurringTransactionData $data
     ): RecurringTransaction {
+
+        $user = User::query()->findOrFail($data->userId);
+        $result = $this->entitlements->check($user, Feature::RecurringTransactions);
+        if (! $result->allowed) {
+            throw ValidationException::withMessages(['title' => "You've reached the {$result->limit}-schedule limit on the Free plan."]);
+        }
 
         if ($data->amount <= 0) {
 
@@ -94,10 +102,6 @@ class CreateRecurringTransaction
             'status' => RecurringStatus::Active,
 
         ]);
-
-        if ($startAt->lte(now())) {
-            $this->recurringTransactionService->generate($recurring);
-        }
 
         return $recurring->refresh();
 

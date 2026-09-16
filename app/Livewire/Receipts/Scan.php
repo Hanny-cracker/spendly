@@ -5,12 +5,14 @@ namespace App\Livewire\Receipts;
 use App\Actions\Transactions\CreateTransaction;
 use App\Contracts\AIProvider;
 use App\Data\Transaction\CreateTransactionData;
+use App\Enums\Feature;
 use App\Enums\ReceiptStatus;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\Receipt;
+use App\Services\Entitlements\EntitlementService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -48,10 +50,16 @@ class Scan extends Component
         $this->date = now()->toDateString();
     }
 
-    public function scan(AIProvider $provider): void
+    public function scan(AIProvider $provider, EntitlementService $entitlements): void
     {
         $this->validate(['image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240']]);
         $user = Auth::user();
+        $result = $entitlements->check($user, Feature::ReceiptScanner);
+        if (! $result->allowed) {
+            $this->addError('image', "You've used all {$result->limit} free receipt scans this month.");
+
+            return;
+        }
         $path = $this->image->store('receipts');
         $this->receipt = Receipt::create(['user_id' => $user->id, 'original_path' => $path, 'original_filename' => $this->image->getClientOriginalName(), 'mime_type' => $this->image->getMimeType(), 'status' => ReceiptStatus::Processing]);
         try {

@@ -408,7 +408,12 @@
             System
         </p>
 
-
+            @if (Route::has('subscription'))
+                <a href="{{ route('subscription') }}" @click="sidebarOpen = false" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs('subscription*') ? 'bg-emerald-700 text-white shadow-sm' : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900' }}">
+                    <span class="text-lg">◈</span>
+                    Subscription
+                </a>
+            @endif
 
             <a
                 href="{{ route('settings') }}"

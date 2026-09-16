@@ -9,7 +9,7 @@ use App\Services\RecurringTransactions\RecurringTransactionService;
 it('protects show and renders only linked generated history newest first', function () {
     $user = User::factory()->create();
     $other = User::factory()->create();
-    $account = Account::factory()->for($user)->create();
+    $account = Account::factory()->for($user)->create(['current_balance' => 100000]);
     $category = Category::factory()->for($user)->expense()->create();
     $schedule = RecurringTransaction::factory()->for($user)->for($account)->for($category)->create(['title' => 'Internet Subscription', 'amount' => 25000]);
     $otherSchedule = RecurringTransaction::factory()->for($user)->for($account)->for($category)->create(['title' => 'Other Schedule']);

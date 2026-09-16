@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Contracts\AIProvider;
+use App\Contracts\PaymentGateway;
 use App\Services\AI\GeminiProvider;
 use App\Services\AI\OpenAIProvider;
+use App\Services\Payments\FakePaymentGateway;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AIProvider::class, fn () => config('ai.provider') === 'gemini'
             ? app(GeminiProvider::class)
             : app(OpenAIProvider::class));
+        $this->app->bind(PaymentGateway::class, FakePaymentGateway::class);
     }
 
     /**

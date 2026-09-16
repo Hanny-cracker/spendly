@@ -27,6 +27,7 @@ it('sends a notification after a recurring transaction is generated', function (
 
     $account = Account::factory()->create([
         'user_id' => $user->id,
+        'current_balance' => 500000,
     ]);
 
     $category = Category::factory()->create([

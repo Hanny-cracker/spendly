@@ -13,6 +13,7 @@ use App\Models\RecurringTransaction;
 use App\Models\User;
 use App\Models\UserPreference;
 use App\Notifications\RecurringTransactionNotification;
+use App\Services\RecurringTransactions\RecurringTransactionService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -65,9 +66,40 @@ it('preserves New York local wall clock time across daylight saving changes', fu
     UserPreference::query()->updateOrCreate(['user_id' => $user->id], ['timezone' => 'America/New_York']);
 
     $schedule = createTimezoneSchedule($user, '2026-03-07', '09:00')->refresh();
+    Carbon::setTestNow('2026-03-07 15:00:00 UTC');
+    app(RecurringTransactionService::class)->generate($schedule);
+    $schedule->refresh();
 
     expect($schedule->next_run->copy()->utc()->toDateTimeString())->toBe('2026-03-08 13:00:00')
         ->and($schedule->next_run->copy()->setTimezone('America/New_York')->format('H:i'))->toBe('09:00');
+});
+
+it('preserves New York local wall clock time when daylight saving ends', function () {
+    Carbon::setTestNow('2026-11-01 12:00:00 UTC');
+    $user = User::factory()->create();
+    UserPreference::query()->updateOrCreate(['user_id' => $user->id], ['timezone' => 'America/New_York']);
+    $schedule = createTimezoneSchedule($user, '2026-11-01', '09:00')->refresh();
+
+    Carbon::setTestNow('2026-11-01 14:00:00 UTC');
+    app(RecurringTransactionService::class)->generate($schedule);
+    $schedule->refresh();
+
+    expect($schedule->next_run->copy()->utc()->toDateTimeString())->toBe('2026-11-02 14:00:00')
+        ->and($schedule->next_run->copy()->setTimezone('America/New_York')->format('H:i'))->toBe('09:00');
+});
+
+it('preserves a fixed local clock in a timezone without daylight saving', function () {
+    Carbon::setTestNow('2026-09-09 10:00:00 UTC');
+    $user = User::factory()->create();
+    UserPreference::query()->updateOrCreate(['user_id' => $user->id], ['timezone' => 'Africa/Douala']);
+    $schedule = createTimezoneSchedule($user, '2026-09-09', '15:30')->refresh();
+
+    Carbon::setTestNow('2026-09-09 15:00:00 UTC');
+    app(RecurringTransactionService::class)->generate($schedule);
+    $schedule->refresh();
+
+    expect($schedule->next_run->copy()->utc()->toDateTimeString())->toBe('2026-09-10 14:30:00')
+        ->and($schedule->next_run->copy()->setTimezone('Africa/Douala')->format('H:i'))->toBe('15:30');
 });
 
 it('converts an edited local schedule time back to UTC', function () {

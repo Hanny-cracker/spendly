@@ -2,6 +2,7 @@
 
 namespace App\Models\Scopes;
 
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -14,6 +15,10 @@ class UserOwnedScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
+        if (app()->bound('filament') && Filament::getCurrentPanel()?->getId() === 'admin') {
+            return;
+        }
+
         if (Auth::check()) {
             $builder->where(
                 $model->getTable().'.user_id',

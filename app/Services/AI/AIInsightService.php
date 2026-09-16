@@ -4,8 +4,10 @@ namespace App\Services\AI;
 
 use App\Contracts\AIProvider;
 use App\Data\Report\DateRangeData;
+use App\Enums\Feature;
 use App\Models\AIInsight;
 use App\Models\User;
+use App\Services\Entitlements\EntitlementService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -15,6 +17,7 @@ class AIInsightService
     public function __construct(
         private FinancialAnalysisService $analysisService,
         private AIProvider $provider,
+        private EntitlementService $entitlements,
     ) {}
 
     public function latest(User $user): ?AIInsight
@@ -24,6 +27,10 @@ class AIInsightService
 
     public function generate(User $user, bool $force = false): AIInsight
     {
+        $entitlement = $this->entitlements->check($user, Feature::AIInsights);
+        if (! $entitlement->allowed) {
+            throw new RuntimeException("You've used all {$entitlement->limit} free AI analyses this month.");
+        }
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
         $latest = $this->latest($user);

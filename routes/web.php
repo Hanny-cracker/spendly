@@ -3,6 +3,7 @@
 use App\Http\Controllers\Reports\ReportCsvController;
 use App\Http\Controllers\Reports\ReportPdfController;
 use App\Http\Controllers\Reports\ReportPrintController;
+use App\Http\Controllers\Webhooks\PaymentWebhookController;
 use App\Livewire\Accounts\Create as AccountsCreate;
 use App\Livewire\Accounts\Edit as AccountsEdit;
 use App\Livewire\Accounts\Index as AccountsIndex;
@@ -28,11 +29,13 @@ use App\Livewire\Recurring\Index as RecurringIndex;
 use App\Livewire\Recurring\Show as RecurringShow;
 use App\Livewire\Reports\Index as ReportsIndex;
 use App\Livewire\Settings\Index as SettingsIndex;
+use App\Livewire\Subscription\Index as SubscriptionIndex;
 use App\Livewire\Transactions\Create as TransactionsCreate;
 use App\Livewire\Transactions\Edit as TransactionsEdit;
 use App\Livewire\Transactions\Index as TransactionsIndex;
 use App\Livewire\Transactions\Show as TransactionsShow;
 use App\Livewire\Transfers\Create as TransfersCreate;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -109,6 +112,7 @@ Route::get('reports/print', ReportPrintController::class)->middleware('auth')->n
 Route::get('reports', ReportsIndex::class)->middleware('auth')->name('reports');
 
 Route::get('settings', SettingsIndex::class)->middleware('auth')->name('settings');
+Route::get('subscription', SubscriptionIndex::class)->middleware('auth')->name('subscription');
 Route::get('insights', InsightsIndex::class)->middleware('auth')->name('insights');
 Route::get('receipts/scan', ReceiptsScan::class)->middleware('auth')->name('receipts.scan');
 
@@ -137,4 +141,8 @@ Route::get('transactions/{transaction}', TransactionsShow::class)
 Route::get('transfers/create', TransfersCreate::class)
     ->middleware('auth')
     ->name('transfers.create');
+
+Route::post('webhooks/payments/{provider}', PaymentWebhookController::class)
+    ->withoutMiddleware(PreventRequestForgery::class)
+    ->name('webhooks.payments');
 require __DIR__.'/auth.php';
