@@ -21,8 +21,7 @@
             <div class="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-stone-200 bg-[#fffdf8] shadow-xl lg:grid-cols-[0.9fr_1.1fr]">
                 <aside class="hidden bg-emerald-800 p-10 text-white lg:flex lg:flex-col lg:justify-between">
                     <a href="/" wire:navigate class="inline-flex items-center gap-3">
-                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-xl font-bold text-emerald-800">S</span>
-                        <span class="text-2xl font-semibold tracking-tight">Spendly</span>
+                        <img src="{{ asset('images/spendly-logo.png') }}" alt="Spendly" class="h-16 w-52 object-contain object-left mix-blend-multiply">
                     </a>
                     <div>
                         <p class="font-mono text-xs uppercase tracking-[0.2em] text-emerald-200">Your money, clearly</p>
@@ -34,8 +33,7 @@
 
                 <main class="auth-panel p-6 sm:p-10">
                     <div class="mb-8 flex items-center gap-3 lg:hidden">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-700 text-lg font-bold text-white">S</span>
-                        <span class="text-xl font-semibold tracking-tight">Spendly</span>
+                        <img src="{{ asset('images/spendly-logo.png') }}" alt="Spendly" class="h-14 w-44 object-contain object-left">
                     </div>
                     {{ $slot }}
                 </main>

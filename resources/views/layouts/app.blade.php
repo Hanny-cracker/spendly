@@ -139,7 +139,7 @@
                             font-semibold
                             tracking-tight
                         ">
-                            Spendly
+                            <img src="{{ asset('images/spendly-logo.png') }}" alt="Spendly" class="h-10 w-32 object-contain object-left">
                         </a>
 
                     </div>

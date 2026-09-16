@@ -19,50 +19,7 @@
             <div class="flex items-center gap-3">
 
                 {{-- Logo mark --}}
-                <div
-                    class="
-                        flex h-10 w-10
-                        items-center
-                        justify-center
-
-                        rounded-xl
-                        bg-emerald-700
-
-                        text-lg
-                        font-bold
-                        text-white
-                    "
-                >
-                    S
-                </div>
-
-
-                <div>
-
-                    <p
-                        class="
-                            text-2xl
-                            font-semibold
-                            tracking-tight
-                            text-stone-900
-                        "
-                    >
-                        Spendly
-                    </p>
-
-                    <p
-                        class="
-                            font-mono
-                            text-[9px]
-                            uppercase
-                            tracking-[0.18em]
-                            text-stone-400
-                        "
-                    >
-                        Expense tracker
-                    </p>
-
-                </div>
+                <img src="{{ asset('images/spendly-logo.png') }}" alt="Spendly" class="h-14 w-44 object-contain object-left mix-blend-multiply">
 
             </div>
 
